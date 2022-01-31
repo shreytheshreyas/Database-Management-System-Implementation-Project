@@ -108,8 +108,8 @@ public class CreateStudentDB {
          }
          System.out.println("ENROLL records inserted.");
          
-         s = "create index sidx on student (majorid) using btree";
-         stmt.executeUpdate(s);
+         String createIndexStatement = "create index sidx on student (majorid) using btree";
+         myPlanner.executeUpdate(createIndexStatement, myTransaction);
          System.out.println("Index for MajorId created on Student table");
 
          myTransaction.commit();
