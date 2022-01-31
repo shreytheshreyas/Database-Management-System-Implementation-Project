@@ -17,7 +17,7 @@ import simpledb.index.btree.BTreeIndex; //in case we change to btree indexing
  * @author Edward Sciore
  */
 public class IndexInfo {
-   private String idxname, fldname;
+   private String idxname, fldname, idxtype;
    private Transaction tx;
    private Schema tblSchema;
    private Layout idxLayout;
@@ -31,10 +31,11 @@ public class IndexInfo {
     * @param tblSchema the schema of the table
     * @param si the statistics for the table
     */
-   public IndexInfo(String idxname, String fldname, Schema tblSchema,
+   public IndexInfo(String idxname, String fldname, String idxtype, Schema tblSchema,
                     Transaction tx,  StatInfo si) {
       this.idxname = idxname;
       this.fldname = fldname;
+      this.idxtype = idxtype;
       this.tx = tx;
       this.tblSchema = tblSchema;
       this.idxLayout = createIdxLayout();
@@ -46,8 +47,11 @@ public class IndexInfo {
     * @return the Index object associated with this information
     */
    public Index open() {
-      return new HashIndex(tx, idxname, idxLayout);
-//    return new BTreeIndex(tx, idxname, idxLayout);
+	   if (this.idxtype.equals("btree")) {
+		   return new BTreeIndex(tx, idxname, idxLayout);
+	   } else {		   
+		   return new HashIndex(tx, idxname, idxLayout);
+	   }
    }
    
    /**
