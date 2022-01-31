@@ -107,8 +107,13 @@ public class CreateStudentDB {
             myPlanner.executeUpdate(command, myTransaction);
          }
          System.out.println("ENROLL records inserted.");
+         
+         s = "create index sidx on student (majorid) using btree";
+         stmt.executeUpdate(s);
+         System.out.println("Index for MajorId created on Student table");
 
          myTransaction.commit();
+
       }
       catch(Exception e) {
          e.printStackTrace();
