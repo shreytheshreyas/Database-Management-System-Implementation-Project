@@ -10,10 +10,11 @@ public class CreateIndexData {
    /**
     * Saves the table and field names of the specified index.
     */
-   public CreateIndexData(String idxname, String tblname, String fldname) {
+   public CreateIndexData(String idxname, String tblname, String fldname, String idxtype) {
       this.idxname = idxname;
       this.tblname = tblname;
       this.fldname = fldname;
+      this.idxtype = idxtype;
    }
    
    /**
@@ -38,6 +39,14 @@ public class CreateIndexData {
     */
    public String fieldName() {
       return fldname;
+   }
+   
+   /**
+    * Returns the type of the index.
+    * @return the type of the index
+    */
+   public String indexType() {
+	   return idxtype;
    }
 }
 
