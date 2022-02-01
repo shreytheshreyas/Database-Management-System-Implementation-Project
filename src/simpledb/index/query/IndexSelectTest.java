@@ -29,7 +29,7 @@ public class IndexSelectTest {
 		Constant c = new Constant(6);
 		
 		// Two different ways to use the index in simpledb:
-		useIndexManually(sidIdx, enrollPlan, c);
+//		useIndexManually(sidIdx, enrollPlan, c);
 		useIndexScan(sidIdx, enrollPlan, c);
 		
 		tx.commit();
