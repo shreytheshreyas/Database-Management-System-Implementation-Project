@@ -24,10 +24,10 @@ public class StudentMajor {
 //         String myQuery = "SELECT Sname, Dname FROM STUDENT, DEPT"
 //                 + " WHERE MajorId = DId";
 
-         String myQuery = "SELECT did, dname FROM DEPT WHERE dname < did";
+//         String myQuery = "SELECT did, dname FROM DEPT WHERE dname < did";
 //         String myQuery = "SELECT did, dname FROM DEPT WHERE did <= 20";
 //         String myQuery = "SELECT sid FROM STUDENT";
-
+         String myQuery = "SELECT eid FROM enroll WHERE studentId = 6";
          //TEST FOR COMPARING
 //         String myQuery = "SELECT eid, did FROM ENROLL, DEPT WHERE eid < did";
          //Creating a query Plan
@@ -38,13 +38,16 @@ public class StudentMajor {
 
 //         System.out.println("Name\tMajor");
 //         System.out.println("did\tdname");
-         System.out.println("did \t departmentName");
+//         System.out.println("did \t departmentName");
+         System.out.println("eid");
          while (resultScanner.next()) {
 //            int enrollsId = resultScanner.getInt("eid");
-            int departmentId = resultScanner.getInt("did");
-            String departmentName = resultScanner.getString("dname");
-            System.out.println(departmentId + "\t" + departmentName);
+//            int departmentId = resultScanner.getInt("did");
+//            String departmentName = resultScanner.getString("dname");
+            String enrollId = resultScanner.getString("eid");
+//            System.out.println(departmentId + "\t" + departmentName);
 //            System.out.println(enrollsId + "\t" + departmentId);
+            System.out.println(enrollId);
          }
          resultScanner.close();
          myTransaction.commit();

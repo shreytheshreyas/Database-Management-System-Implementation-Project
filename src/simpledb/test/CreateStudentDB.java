@@ -15,6 +15,11 @@ public class CreateStudentDB {
          //Creating Planner
          Planner myPlanner = myDatabase.planner();
 
+         //Creating Index on Student's realtion on the majorid field.
+         String createIndexStatement = "create index myStudentIndex on student (majorid) using btree";
+         myPlanner.executeUpdate(createIndexStatement, myTransaction);
+         System.out.println("Index for MajorId created on Student table");
+
          //CREATING STUDENT TABLE
          String createTableStatement = "create table STUDENT(sid int, sname varchar(10), majorid int, gradyear int)";
          myPlanner.executeUpdate(createTableStatement, myTransaction);
@@ -94,6 +99,12 @@ public class CreateStudentDB {
          myPlanner.executeUpdate(createTableStatement, myTransaction);
          System.out.println("Table ENROLL created.");
 
+         //Creating Index on Enroll's relation on the sid field.
+         createIndexStatement = "create index myEnrollsIndex on enroll (studentid) using btree";
+         myPlanner.executeUpdate(createIndexStatement, myTransaction);
+         System.out.println("Index for StudentId created on Enroll table");
+         myTransaction.commit();
+
          //INSERTING ENROLLS DATA
          insertDataStatement = "insert into ENROLL(eid, studentid, sectionid, grade) values ";
          String[] enrollValues = {"(14, 1, 13, 'A')",
@@ -107,12 +118,7 @@ public class CreateStudentDB {
             myPlanner.executeUpdate(command, myTransaction);
          }
          System.out.println("ENROLL records inserted.");
-         
-         String createIndexStatement = "create index sidx on student (majorid) using btree";
-         myPlanner.executeUpdate(createIndexStatement, myTransaction);
-         System.out.println("Index for MajorId created on Student table");
 
-         myTransaction.commit();
 
       }
       catch(Exception e) {

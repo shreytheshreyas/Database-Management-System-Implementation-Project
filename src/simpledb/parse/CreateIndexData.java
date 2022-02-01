@@ -5,7 +5,10 @@ package simpledb.parse;
  * @author Edward Sciore
  */
 public class CreateIndexData {
-   private String idxname, tblname, fldname;
+   private String idxname;
+   private String tblname;
+   private String fldname;
+   private String idxtype;
    
    /**
     * Saves the table and field names of the specified index.

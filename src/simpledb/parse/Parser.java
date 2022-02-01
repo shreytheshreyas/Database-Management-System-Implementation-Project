@@ -276,6 +276,8 @@ public class Parser {
       lex.eatDelim('(');
       String fldname = field();
       lex.eatDelim(')');
+      /*TODO: include the conditional over here for using. Should be able to deal with the edge case that
+         when the using key word is not provided. can use with the help of the match lex.matchDelim() method*/
       lex.eatKeyword("using");
       String idxtype = null;
       if (lex.matchKeyword("hash"))
@@ -284,6 +286,7 @@ public class Parser {
     	  idxtype = "btree";
       
       return new CreateIndexData(idxname, tblname, fldname, idxtype);
+//      return new CreateIndexData(idxname, tblname, fldname, "btree");
    }
 }
 
