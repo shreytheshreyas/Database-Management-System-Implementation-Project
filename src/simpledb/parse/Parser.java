@@ -278,13 +278,17 @@ public class Parser {
       lex.eatDelim(')');
       /*TODO: include the conditional over here for using. Should be able to deal with the edge case that
          when the using key word is not provided. can use with the help of the match lex.matchDelim() method*/
-      lex.eatKeyword("using");
       String idxtype = null;
-      if (lex.matchKeyword("hash"))
-    	  idxtype = "hash";
-      else if (lex.matchKeyword("btree"))
-    	  idxtype = "btree";
-      
+      if (lex.matchKeyword("using")) {
+         lex.eatKeyword("using");
+         if (lex.matchKeyword("hash"))
+            idxtype = "hash";
+         else if (lex.matchKeyword("btree"))
+            idxtype = "btree";
+      }
+      else {
+         idxtype = "btree"; //WILL DEFAULT TO B+TREE INDEX IMPLEMENTATION IF THE USING KEYWORD IS NOT SPECIFIED
+      }
       return new CreateIndexData(idxname, tblname, fldname, idxtype);
 //      return new CreateIndexData(idxname, tblname, fldname, "btree");
    }

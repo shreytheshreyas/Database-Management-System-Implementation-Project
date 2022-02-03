@@ -63,7 +63,7 @@ public class CreateStudentDB {
          System.out.println("Table COURSE created.");
 
          //CREATING COURSES TABLE INDEX ON COURSES' RELATION ON THE TITLE FIELD
-         createIndexStatement = "create index myCoursesIndex on course(title) using hash";
+         createIndexStatement = "create index myCoursesIndex on course(title)";
          myPlanner.executeUpdate(createIndexStatement, myTransaction);
          System.out.println("Index for course title has been created");
 
@@ -85,6 +85,11 @@ public class CreateStudentDB {
          createTableStatement = "create table SECTION(sectid int, courseid int, prof varchar(8), yearoffered int)";
          myPlanner.executeUpdate(createTableStatement, myTransaction);
          System.out.println("Table SECTION created.");
+
+         //CREATING COURSES TABLE INDEX ON SECTION'S RELATION ON THE TITLE FIELD
+         createIndexStatement = "create index on section(courseid) using hash";
+         myPlanner.executeUpdate(createIndexStatement, myTransaction);
+         System.out.println("Index for section courseid has been created");
 
          //INSERTING STUDENT DATA
          insertDataStatement = "insert into SECTION(sectid, courseid, prof, yearoffered) values ";

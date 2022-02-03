@@ -29,8 +29,8 @@ public class IndexSelectTest2 {
         Constant c = new Constant("db systems");
 
         // Two different ways to use the index in simpledb:
-//		useIndexManually(titleIndex, courseRelationPlan, c);
-        useIndexScan(titleIndex, courseRelationPlan, c);
+		useIndexManually(titleIndex, courseRelationPlan, c);
+//        useIndexScan(titleIndex, courseRelationPlan, c);
 
         tx.commit();
     }
