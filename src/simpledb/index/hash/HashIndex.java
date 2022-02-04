@@ -13,7 +13,7 @@ import simpledb.query.*;
  */
 public class HashIndex implements Index {
 	public static int NUM_BUCKETS = 100;
-   private Transaction tx;
+   	private Transaction tx;
 	private String idxname;
 	private Layout layout;
 	private Constant searchkey = null;

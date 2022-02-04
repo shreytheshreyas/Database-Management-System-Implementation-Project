@@ -20,7 +20,7 @@ public class IndexRetrievalTest {
       UpdateScan studentscan = (UpdateScan) studentplan.open();
 
       // Open the index on MajorId.
-      Map<String,IndexInfo> indexes = mdm.getIndexInfo("student", tx);
+      Map<String, IndexInfo> indexes = mdm.getIndexInfo("student", tx);
       IndexInfo ii = indexes.get("majorid");
       Index idx = ii.open();
 

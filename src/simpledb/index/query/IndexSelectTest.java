@@ -15,22 +15,22 @@ import simpledb.record.*;
 public class IndexSelectTest {
 	public static void main(String[] args) {
 		SimpleDB db = new SimpleDB("studentdb");
-      MetadataMgr mdm = db.mdMgr();
-      Transaction tx = db.newTx();
+      	MetadataMgr mdm = db.mdMgr();
+      	Transaction tx = db.newTx();
 
 		// Find the index on StudentId.
 		Map<String,IndexInfo> indexes = mdm.getIndexInfo("enroll", tx);
 		IndexInfo sidIdx = indexes.get("studentid");
 
 		// Get the plan for the Enroll table
-		Plan enrollplan = new TablePlan(tx, "enroll", mdm);
+		Plan enrollPlan = new TablePlan(tx, "enroll", mdm);
 		
 		// Create the selection constant
 		Constant c = new Constant(6);
 		
 		// Two different ways to use the index in simpledb:
-		useIndexManually(sidIdx, enrollplan, c);		
-		useIndexScan(sidIdx, enrollplan, c);
+//		useIndexManually(sidIdx, enrollPlan, c);
+		useIndexScan(sidIdx, enrollPlan, c);
 		
 		tx.commit();
 	}
@@ -38,7 +38,7 @@ public class IndexSelectTest {
 	private static void useIndexManually(IndexInfo ii, Plan p, Constant c) {
 		// Open a scan on the table.
 		TableScan s = (TableScan) p.open();  //must be a table scan
-		Index idx = ii.open();
+		Index idx = ii.open(); //returns the respective index based on idx type
 
 		// Retrieve all index records having the specified dataval.
 		idx.beforeFirst(c);

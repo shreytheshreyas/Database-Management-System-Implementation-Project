@@ -20,6 +20,11 @@ public class CreateStudentDB {
          myPlanner.executeUpdate(createTableStatement, myTransaction);
          System.out.println("Table STUDENT created.");
 
+         //Creating Index on Student's realtion on the majorid field.
+         String createIndexStatement = "create index myStudentIndex on student (majorid) using btree";
+         myPlanner.executeUpdate(createIndexStatement, myTransaction);
+         System.out.println("Index for MajorId created on Student table");
+
          //INSERTING STUDENT DATA
          String insertDataStatement = "insert into STUDENT(sid, sname, majorid, gradyear) values ";
          String[] studentValues = {"(1, 'joe', 10, 2021)",
@@ -52,10 +57,15 @@ public class CreateStudentDB {
          }
          System.out.println("DEPT records inserted.");
 
-         //CREATING COURSES TABLE
+         //CREATING COURSE TABLE
          createTableStatement = "create table COURSE(cid int, title varchar(20), deptid int)";
          myPlanner.executeUpdate(createTableStatement, myTransaction);
          System.out.println("Table COURSE created.");
+
+         //CREATING COURSES TABLE INDEX ON COURSES' RELATION ON THE TITLE FIELD
+         createIndexStatement = "create index myCoursesIndex on course(title)";
+         myPlanner.executeUpdate(createIndexStatement, myTransaction);
+         System.out.println("Index for course title has been created");
 
          //INSERTING COURSES DATA
          insertDataStatement = "insert into COURSE(cid, title, deptid) values ";
@@ -76,6 +86,11 @@ public class CreateStudentDB {
          myPlanner.executeUpdate(createTableStatement, myTransaction);
          System.out.println("Table SECTION created.");
 
+         //CREATING COURSES TABLE INDEX ON SECTION'S RELATION ON THE TITLE FIELD
+         createIndexStatement = "create index on section(courseid) using hash";
+         myPlanner.executeUpdate(createIndexStatement, myTransaction);
+         System.out.println("Index for section courseid has been created");
+
          //INSERTING STUDENT DATA
          insertDataStatement = "insert into SECTION(sectid, courseid, prof, yearoffered) values ";
          String[] sectionValues = {"(13, 12, 'turing', 2018)",
@@ -94,6 +109,11 @@ public class CreateStudentDB {
          myPlanner.executeUpdate(createTableStatement, myTransaction);
          System.out.println("Table ENROLL created.");
 
+         //CREATING INDEX ON ENROLL'S RELATION ON THE SID FIELD
+         createIndexStatement = "create index myEnrollsIndex on enroll (studentid) using hash";
+         myPlanner.executeUpdate(createIndexStatement, myTransaction);
+         System.out.println("Index for StudentId created on Enroll table");
+
          //INSERTING ENROLLS DATA
          insertDataStatement = "insert into ENROLL(eid, studentid, sectionid, grade) values ";
          String[] enrollValues = {"(14, 1, 13, 'A')",
@@ -107,11 +127,6 @@ public class CreateStudentDB {
             myPlanner.executeUpdate(command, myTransaction);
          }
          System.out.println("ENROLL records inserted.");
-         
-         s = "create index sidx on student (majorid) using btree";
-         stmt.executeUpdate(s);
-         System.out.println("Index for MajorId created on Student table");
-
          myTransaction.commit();
 
       }
