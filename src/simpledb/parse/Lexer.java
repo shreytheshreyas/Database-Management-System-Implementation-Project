@@ -122,7 +122,15 @@ public class Lexer {
          throw new BadSyntaxException();
       nextToken();
    }
-   
+
+   public String eatOrderKeyword() {
+      String s = tok.sval;
+      if (!matchKeyword(s))
+         throw new BadSyntaxException();
+      nextToken();
+      return s;
+   }
+
    /**
     * Throws an exception if the current token is not 
     * an identifier. 
@@ -151,6 +159,6 @@ public class Lexer {
       keywords = Arrays.asList("select", "from", "where", "and",
                                "insert", "into", "values", "delete", "update", "set", 
                                "create", "table", "int", "varchar", "view", "as", "index", "on",
-                               "using", "hash", "btree");
+                               "using", "hash", "btree", "order", "by", "asc", "desc");
    }
 }

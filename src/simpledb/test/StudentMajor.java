@@ -21,20 +21,27 @@ public class StudentMajor {
          Planner myPlanner = myDatabase.planner();
 
          //ORIGINAL SQL query statement
-         String myQuery = "SELECT Sname, Dname FROM STUDENT, DEPT"
-                 + " WHERE MajorId = DId";
-         
+//         String myQuery = "SELECT Sname, Dname FROM STUDENT, DEPT"
+//                 + " WHERE MajorId = DId";
+
+         //selected id and name from student
+//         String myQuery = "SELECT sname, sid FROM STUDENT ";
+         //SORTING TEST
+         String myQuery = "SELECT sname, sid FROM STUDENT ORDER BY sname desc, sid asc";
          //Creating a query Plan
          Plan myPlan = myPlanner.createQueryPlan(myQuery, myTransaction);
 
          //Scanning result set
          Scan resultScanner = myPlan.open();
 
-         System.out.println("student_name\tdepartmentName");
+         System.out.println("student_name\tsid");
          while (resultScanner.next()) {
+//            String studentName = resultScanner.getString("sname");
+//            String departmentName = resultScanner.getString("dname");
+//            System.out.println(studentName + "\t\t\t\t" + departmentName);
             String studentName = resultScanner.getString("sname");
-            String departmentName = resultScanner.getString("dname");
-            System.out.println(studentName + "\t\t\t\t" + departmentName);
+            Integer sid = resultScanner.getInt("sid");
+            System.out.println(studentName+ "\t\t\t\t" + sid);
          }
 
          resultScanner.close();

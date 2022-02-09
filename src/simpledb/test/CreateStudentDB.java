@@ -35,7 +35,17 @@ public class CreateStudentDB {
                "(6, 'kim', 20, 2020)",
                "(7, 'art', 30, 2021)",
                "(8, 'pat', 20, 2019)",
-         "(9, 'lee', 10, 2021)"};
+                 "(9, 'lee', 10, 2021)",
+                 "(11, 'joe', 10, 2021)",
+                 "(12, 'amy', 20, 2020)",
+                 "(13, 'max', 10, 2022)",
+                 "(14, 'sue', 20, 2022)",
+                 "(15, 'bob', 30, 2020)",
+                 "(16, 'kim', 20, 2020)",
+                 "(17, 'art', 30, 2021)",
+                 "(18, 'pat', 20, 2019)",
+                 "(19, 'lee', 10, 2021)"
+         };
          for (String studentValue : studentValues) {
             myPlanner.executeUpdate(insertDataStatement + studentValue, myTransaction);
          }
@@ -87,7 +97,7 @@ public class CreateStudentDB {
          System.out.println("Table SECTION created.");
 
          //CREATING COURSES TABLE INDEX ON SECTION'S RELATION ON THE TITLE FIELD
-         createIndexStatement = "create index on section(courseid) using hash";
+         createIndexStatement = "create index mySectionIndex on section (courseid)";
          myPlanner.executeUpdate(createIndexStatement, myTransaction);
          System.out.println("Index for section courseid has been created");
 

@@ -12,14 +12,15 @@ public class QueryData {
    private List<String> fields;
    private Collection<String> tables;
    private Predicate pred;
-   
+   private HashMap<String, String> orderFields;
    /**
     * Saves the field and table list and predicate.
     */
-   public QueryData(List<String> fields, Collection<String> tables, Predicate pred) {
+   public QueryData(List<String> fields, Collection<String> tables, Predicate pred, HashMap<String, String> orderFields) {
       this.fields = fields;
       this.tables = tables;
       this.pred = pred;
+      this.orderFields = orderFields;
    }
    
    /**
@@ -60,5 +61,13 @@ public class QueryData {
       if (!predstring.equals(""))
          result += " where " + predstring;
       return result;
+   }
+
+   public boolean hasOrderFields() {
+      return !orderFields.isEmpty();
+   }
+
+   public HashMap<String, String> orderFields() {
+      return orderFields;
    }
 }
