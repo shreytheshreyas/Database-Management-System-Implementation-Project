@@ -87,7 +87,7 @@ public class CreateStudentDB {
          System.out.println("Table SECTION created.");
 
          //CREATING COURSES TABLE INDEX ON SECTION'S RELATION ON THE TITLE FIELD
-         createIndexStatement = "create index on section(courseid) using hash";
+         createIndexStatement = "create index mySectionIndex on section (courseid)";
          myPlanner.executeUpdate(createIndexStatement, myTransaction);
          System.out.println("Index for section courseid has been created");
 

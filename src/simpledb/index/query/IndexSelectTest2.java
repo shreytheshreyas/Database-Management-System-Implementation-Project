@@ -10,7 +10,7 @@ import simpledb.index.planner.IndexSelectPlan;
 import java.util.Map;
 import simpledb.record.*;
 
-// Find the grades of student 6.
+// Obtaining department id of course.
 
 public class IndexSelectTest2 {
     public static void main(String[] args) {

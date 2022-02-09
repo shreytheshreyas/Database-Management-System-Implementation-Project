@@ -100,7 +100,15 @@ public class Parser {
          lex.eatKeyword("where");
          pred = predicate();
       }
-      return new QueryData(fields, tables, pred);
+      HashMap<String, String> orderFields = null;
+      if(lex.matchKeyword("order")) {
+         lex.eatKeyword("order");
+         if (lex.matchKeyword("by")) {
+            lex.eatKeyword("by");
+            orderFields = orderList();
+         }
+      }
+      return new QueryData(fields, tables, pred, orderFields);
    }
    
    private List<String> selectList() {
@@ -112,7 +120,18 @@ public class Parser {
       }
       return L;
    }
-   
+
+   private HashMap<String, String> orderList() {
+      HashMap<String, String> myMap = new HashMap<>();
+      String primaryField = field();
+      String order = lex.eatKeyword();
+      myMap.put(primaryField, order);
+      if (lex.matchDelim(',')) {
+         lex.eatDelim(',');
+//         myMap.addAll(selectList());
+      }
+      return myMap;
+   }
    private Collection<String> tableList() {
       Collection<String> L = new ArrayList<String>();
       L.add(lex.eatId());
@@ -276,8 +295,6 @@ public class Parser {
       lex.eatDelim('(');
       String fldname = field();
       lex.eatDelim(')');
-      /*TODO: include the conditional over here for using. Should be able to deal with the edge case that
-         when the using key word is not provided. can use with the help of the match lex.matchDelim() method*/
       String idxtype = null;
       if (lex.matchKeyword("using")) {
          lex.eatKeyword("using");
