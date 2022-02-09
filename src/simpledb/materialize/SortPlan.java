@@ -14,12 +14,13 @@ public class SortPlan implements Plan {
    private Transaction tx;
    private Plan p;
    private Schema sch;
+   private HashMap<String, String> sortFields;
    private RecordComparator comp;
-   
+
    /**
     * Create a sort plan for the specified query.
     * @param p the plan for the underlying query
-    * @param sortfields the fields to sort by
+    * @param fields the fields to sort by
     * @param tx the calling transaction
     */
 
@@ -29,11 +30,12 @@ public class SortPlan implements Plan {
       sch = p.schema();
       comp = new RecordComparator(fields);
    }
-   public SortPlan(Transaction tx, Plan p, HashMap<String, String> sortfields) {
+   public SortPlan(Transaction tx, Plan p, HashMap<String, String> sortFields) {
       this.tx = tx;
       this.p = p;
+      this.sortFields = sortFields;
       sch = p.schema();
-      comp = new RecordComparator(sortfields);
+      comp = new RecordComparator(sortFields);
    }
    
    /**
@@ -48,7 +50,7 @@ public class SortPlan implements Plan {
       src.close();
       while (runs.size() > 2)
          runs = doAMergeIteration(runs);
-      return new SortScan(runs, comp);
+      return new SortScan(runs, comp, this.sortFields);
    }
    
    /**
@@ -101,14 +103,22 @@ public class SortPlan implements Plan {
       TempTable currenttemp = new TempTable(tx, sch);
       temps.add(currenttemp);
       UpdateScan currentscan = currenttemp.open();
+      Object key = this.sortFields.keySet().toArray()[0];
+      String valueForFirstKey = this.sortFields.get(key);
       while (copy(src, currentscan))
-         if (comp.compare(src, currentscan) > 0) {
-         // start a new run
-         currentscan.close();
-         currenttemp = new TempTable(tx, sch);
-         temps.add(currenttemp);
-         currentscan = (UpdateScan) currenttemp.open();
-      }
+         if (comp.compare(src, currentscan) > 0 && valueForFirstKey.equals("desc")) {
+            // start a new run
+            currentscan.close();
+            currenttemp = new TempTable(tx, sch);
+            temps.add(currenttemp);
+            currentscan = (UpdateScan) currenttemp.open();
+         } else if (comp.compare(src, currentscan) < 0 && valueForFirstKey.equals("asc")) {
+            // start a new run
+            currentscan.close();
+            currenttemp = new TempTable(tx, sch);
+            temps.add(currenttemp);
+            currentscan = (UpdateScan) currenttemp.open();
+         }
       currentscan.close();
       return temps;
    }
@@ -133,11 +143,17 @@ public class SortPlan implements Plan {
       
       boolean hasmore1 = src1.next();
       boolean hasmore2 = src2.next();
+
+      Object key = this.sortFields.keySet().toArray()[0];
+      String valueForFirstKey = this.sortFields.get(key);
+
       while (hasmore1 && hasmore2)
-         if (comp.compare(src1, src2) > 0)
-         hasmore1 = copy(src1, dest);
-      else
-         hasmore2 = copy(src2, dest);
+         if (comp.compare(src1, src2) > 0 && valueForFirstKey.equals("desc"))
+            hasmore1 = copy(src1, dest);
+         else if (comp.compare(src1, src2) < 0 && valueForFirstKey.equals("asc"))
+            hasmore1 = copy(src1, dest);
+         else
+            hasmore2 = copy(src2, dest);
       
       if (hasmore1)
          while (hasmore1)

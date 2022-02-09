@@ -124,11 +124,11 @@ public class Parser {
    private HashMap<String, String> orderList() {
       HashMap<String, String> myMap = new HashMap<>();
       String primaryField = field();
-      String order = lex.eatKeyword();
+      String order = lex.eatOrderKeyword();
       myMap.put(primaryField, order);
       if (lex.matchDelim(',')) {
          lex.eatDelim(',');
-//         myMap.addAll(selectList());
+         myMap.putAll(orderList());
       }
       return myMap;
    }

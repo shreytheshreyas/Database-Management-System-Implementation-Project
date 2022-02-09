@@ -46,5 +46,9 @@ public class RecordComparator implements Comparator<Scan> {
          }
       return 0;
    }
+
+//   public String getOrder(String key){
+//
+//   }
 }
 

@@ -122,7 +122,15 @@ public class Lexer {
          throw new BadSyntaxException();
       nextToken();
    }
-   
+
+   public String eatOrderKeyword() {
+      String s = tok.sval;
+      if (!matchKeyword(s))
+         throw new BadSyntaxException();
+      nextToken();
+      return s;
+   }
+
    /**
     * Throws an exception if the current token is not 
     * an identifier. 
