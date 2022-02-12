@@ -38,11 +38,21 @@ public class RecordComparator implements Comparator<Scan> {
    public int compare(Scan s1, Scan s2) {
       for (HashMap.Entry mapElement : mapFields.entrySet()) {
          String fldname = (String) mapElement.getKey();
+         String orderValue =(String) mapElement.getValue();
+
             Constant val1 = s1.getVal(fldname);
             Constant val2 = s2.getVal(fldname);
             int result = val1.compareTo(val2);
-            if (result != 0)
-               return result;
+            if (result > 0 && orderValue == "desc") {
+               return 1;
+            } else if (result > 0 && orderValue == "asc") {
+               return -1;
+            }
+            if (result < 0 && orderValue == "asc"){
+               return 1;
+            } else if (result < 0 && orderValue == "desc") {
+               return -1;
+            }
          }
       return 0;
    }
