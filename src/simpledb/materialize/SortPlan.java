@@ -103,16 +103,15 @@ public class SortPlan implements Plan {
       TempTable currenttemp = new TempTable(tx, sch);
       temps.add(currenttemp);
       UpdateScan currentscan = currenttemp.open();
-      Object key = this.sortFields.keySet().toArray()[0];
-      String valueForFirstKey = this.sortFields.get(key);
+
       while (copy(src, currentscan))
-         if (comp.compare(src, currentscan) > 0 && valueForFirstKey.equals("desc")) {
+         if (comp.compare(src, currentscan) > 0) {
             // start a new run
             currentscan.close();
             currenttemp = new TempTable(tx, sch);
             temps.add(currenttemp);
             currentscan = (UpdateScan) currenttemp.open();
-         } else if (comp.compare(src, currentscan) < 0 && valueForFirstKey.equals("asc")) {
+         } else {
             // start a new run
             currentscan.close();
             currenttemp = new TempTable(tx, sch);
@@ -144,13 +143,9 @@ public class SortPlan implements Plan {
       boolean hasmore1 = src1.next();
       boolean hasmore2 = src2.next();
 
-      Object key = this.sortFields.keySet().toArray()[0];
-      String valueForFirstKey = this.sortFields.get(key);
 
       while (hasmore1 && hasmore2)
-         if (comp.compare(src1, src2) > 0 && valueForFirstKey.equals("desc"))
-            hasmore1 = copy(src1, dest);
-         else if (comp.compare(src1, src2) < 0 && valueForFirstKey.equals("asc"))
+         if (comp.compare(src1, src2) > 0)
             hasmore1 = copy(src1, dest);
          else
             hasmore2 = copy(src2, dest);

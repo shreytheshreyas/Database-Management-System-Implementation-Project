@@ -70,15 +70,11 @@ public class SortScan implements Scan {
             hasmore2 = s2.next();
       }
 
-      Object key = this.sortFields.keySet().toArray()[0];
-      String valueForFirstKey = this.sortFields.get(key);
 
       if (!hasmore1 && !hasmore2)
          return false;
       else if (hasmore1 && hasmore2) {
-         if (comp.compare(s1, s2) > 0 && valueForFirstKey.equals("desc"))
-            currentscan = s1;
-         else if (comp.compare(s1, s2) < 0 && valueForFirstKey.equals("asc"))
+         if (comp.compare(s1, s2) > 0)
             currentscan = s1;
          else
             currentscan = s2;
