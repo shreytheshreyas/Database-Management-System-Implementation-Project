@@ -124,7 +124,7 @@ public class Parser {
    private HashMap<String, String> orderList() {
       HashMap<String, String> myMap = new HashMap<>();
       String primaryField = field();
-      String order = lex.eatOrderKeyword();
+      String order = (lex.matchKeyword("asc") || lex.matchKeyword("desc")) ? lex.eatOrderKeyword() : "asc";
       myMap.put(primaryField, order);
       if (lex.matchDelim(',')) {
          lex.eatDelim(',');

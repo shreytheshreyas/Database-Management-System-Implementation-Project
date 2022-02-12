@@ -27,7 +27,7 @@ public class StudentMajor {
          //selected id and name from student
 //         String myQuery = "SELECT sname, sid FROM STUDENT ";
          //SORTING TEST
-         String myQuery = "SELECT sname, sid FROM STUDENT ORDER BY sname asc, sid desc";
+         String myQuery = "SELECT sname, sid FROM STUDENT ORDER BY sname, sid ";
          //Creating a query Plan
          Plan myPlan = myPlanner.createQueryPlan(myQuery, myTransaction);
 
