@@ -100,7 +100,7 @@ public class Parser {
          lex.eatKeyword("where");
          pred = predicate();
       }
-      HashMap<String, String> orderFields = null;
+      LinkedHashMap<String, String> orderFields = null;
       if(lex.matchKeyword("order")) {
          lex.eatKeyword("order");
          if (lex.matchKeyword("by")) {
@@ -121,15 +121,22 @@ public class Parser {
       return L;
    }
 
-   private HashMap<String, String> orderList() {
-      HashMap<String, String> myMap = new HashMap<>();
+   private LinkedHashMap<String, String> orderList() {
+      LinkedHashMap<String, String> myMap = new LinkedHashMap<>();
       String primaryField = field();
       String order = (lex.matchKeyword("asc") || lex.matchKeyword("desc")) ? lex.eatOrderKeyword() : "asc";
       myMap.put(primaryField, order);
-      if (lex.matchDelim(',')) {
+
+      while(lex.matchDelim(',')) {
          lex.eatDelim(',');
-         myMap.putAll(orderList());
+         String subField = field();
+         String subOrder = (lex.matchKeyword("asc") || lex.matchKeyword("desc")) ? lex.eatOrderKeyword() : "asc";
+         myMap.put(subField, subOrder);
       }
+//      if (lex.matchDelim(',')) {
+//         lex.eatDelim(',');
+//         myMap.putAll(orderList());
+//      }
       return myMap;
    }
    private Collection<String> tableList() {

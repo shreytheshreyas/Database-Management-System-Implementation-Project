@@ -9,7 +9,7 @@ import simpledb.query.*;
  * @author Edward Sciore
  */
 public class RecordComparator implements Comparator<Scan> {
-   private HashMap<String, String> mapFields;
+   private LinkedHashMap<String, String> mapFields;
    private List<String> listFields;
    /**
     * Create a comparator using the specified fields,
@@ -19,7 +19,7 @@ public class RecordComparator implements Comparator<Scan> {
    public RecordComparator(List<String> fields) {
       this.listFields = fields;
    }
-   public RecordComparator(HashMap<String, String> fields) {
+   public RecordComparator(LinkedHashMap<String, String> fields) {
       this.mapFields = fields;
    }
    
@@ -36,7 +36,7 @@ public class RecordComparator implements Comparator<Scan> {
     * @return the result of comparing each scan's current record according to the field list
     */
    public int compare(Scan s1, Scan s2) {
-      for (HashMap.Entry mapElement : mapFields.entrySet()) {
+      for (Map.Entry mapElement : mapFields.entrySet()) {
          String fldname = (String) mapElement.getKey();
          String orderValue = (String) mapElement.getValue();
             Constant val1 = s1.getVal(fldname);

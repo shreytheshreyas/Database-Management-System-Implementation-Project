@@ -14,7 +14,7 @@ public class SortPlan implements Plan {
    private Transaction tx;
    private Plan p;
    private Schema sch;
-   private HashMap<String, String> sortFields;
+   private LinkedHashMap<String, String> sortFields;
    private RecordComparator comp;
 
    /**
@@ -30,7 +30,7 @@ public class SortPlan implements Plan {
       sch = p.schema();
       comp = new RecordComparator(fields);
    }
-   public SortPlan(Transaction tx, Plan p, HashMap<String, String> sortFields) {
+   public SortPlan(Transaction tx, Plan p, LinkedHashMap<String, String> sortFields) {
       this.tx = tx;
       this.p = p;
       this.sortFields = sortFields;
