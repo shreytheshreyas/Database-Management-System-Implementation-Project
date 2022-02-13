@@ -18,7 +18,7 @@ public class SortScan implements Scan {
    private RecordComparator comp;
    private boolean hasmore1, hasmore2=false;
    private List<RID> savedposition;
-   private HashMap<String, String> sortFields;
+   private LinkedHashMap<String, String> sortFields;
    
    /**
     * Create a sort scan, given a list of 1 or 2 runs.
@@ -27,7 +27,7 @@ public class SortScan implements Scan {
     * @param runs the list of runs
     * @param comp the record comparator
     */
-   public SortScan(List<TempTable> runs, RecordComparator comp, HashMap<String, String> sortFields) {
+   public SortScan(List<TempTable> runs, RecordComparator comp, LinkedHashMap<String, String> sortFields) {
       this.comp = comp;
       this.sortFields = sortFields;
       s1 = (UpdateScan) runs.get(0).open();
@@ -70,15 +70,11 @@ public class SortScan implements Scan {
             hasmore2 = s2.next();
       }
 
-      Object key = this.sortFields.keySet().toArray()[0];
-      String valueForFirstKey = this.sortFields.get(key);
 
       if (!hasmore1 && !hasmore2)
          return false;
       else if (hasmore1 && hasmore2) {
-         if (comp.compare(s1, s2) > 0 && valueForFirstKey.equals("desc"))
-            currentscan = s1;
-         else if (comp.compare(s1, s2) < 0 && valueForFirstKey.equals("asc"))
+         if (comp.compare(s1, s2) > 0)
             currentscan = s1;
          else
             currentscan = s2;
