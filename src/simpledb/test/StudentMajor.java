@@ -24,18 +24,20 @@ public class StudentMajor {
 //         String myQuery = "SELECT Sname, Dname FROM STUDENT, DEPT"
 //                 + " WHERE MajorId = DId";
 
-         //selected id and name from student
-//         String myQuery = "SELECT sname, sid FROM STUDENT ";
-         //SORTING TEST
-         String myQuery = "SELECT sname, sid FROM STUDENT ORDER BY sid ";
+         //ORDER BY TEST
+//         String myQuery = "SELECT sname, sid FROM STUDENT ORDER BY sid ";
 //         String myQuery = "SELECT sname, sid FROM STUDENT ORDER BY sname, sid desc";
 //         String myQuery = "SELECT sname, sid FROM STUDENT ORDER BY sname desc, sid asc";
 //         String myQuery = "SELECT sname, sid FROM STUDENT ORDER BY sname desc, sid desc";
 //         String myQuery = "SELECT sname, majorid, gradyear FROM STUDENT ORDER BY sname asc, majorid asc, gradyear desc";
+
+
+         //INNER EQUI JOIN TEST - NEED to add INNER JOIN keyword to the list of keywords
+         String myQuery = "SELECT dept.did, title, dname FROM DEPT JOIN COURSE ON dept.did = course.did";
+         //Scanning result set
+
          //Creating a query Plan
          Plan myPlan = myPlanner.createQueryPlan(myQuery, myTransaction);
-
-         //Scanning result set
          Scan resultScanner = myPlan.open();
 
          System.out.println("student_name\tsid");

@@ -99,6 +99,9 @@ public class Parser {
       if (lex.matchKeyword("where")) {
          lex.eatKeyword("where");
          pred = predicate();
+      } else if (lex.matchKeyword("on")) {
+         lex.eatKeyword("on");
+         pred = predicate();
       }
       LinkedHashMap<String, String> orderFields = null;
       if(lex.matchKeyword("order")) {
@@ -144,6 +147,9 @@ public class Parser {
       L.add(lex.eatId());
       if (lex.matchDelim(',')) {
          lex.eatDelim(',');
+         L.addAll(tableList());
+      } else if (lex.matchKeyword("join")) {
+         lex.eatKeyword("join");
          L.addAll(tableList());
       }
       return L;

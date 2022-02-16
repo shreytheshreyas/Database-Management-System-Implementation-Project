@@ -66,6 +66,7 @@ public class Lexer {
     * @return true if the current token is an identifier
     */
    public boolean matchId() {
+      System.out.println(tok.sval);
       return  tok.ttype==StreamTokenizer.TT_WORD && !keywords.contains(tok.sval);
    }
    
@@ -159,6 +160,6 @@ public class Lexer {
       keywords = Arrays.asList("select", "from", "where", "and",
                                "insert", "into", "values", "delete", "update", "set", 
                                "create", "table", "int", "varchar", "view", "as", "index", "on",
-                               "using", "hash", "btree", "order", "by", "asc", "desc");
+                               "using", "hash", "btree", "order", "by", "asc", "desc", "inner", "join");
    }
 }
