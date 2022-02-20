@@ -35,16 +35,7 @@ public class CreateStudentDB {
                "(6, 'kim', 20, 2020)",
                "(7, 'art', 30, 2021)",
                "(8, 'pat', 20, 2019)",
-                 "(9, 'lee', 10, 2023)",
-                 "(11, 'joe', 10, 2024)",
-                 "(12, 'amy', 20, 2025)",
-                 "(13, 'max', 10, 2026)",
-                 "(14, 'sue', 20, 2023)",
-                 "(15, 'bob', 30, 2024)",
-                 "(16, 'kim', 20, 2025)",
-                 "(17, 'art', 30, 2026)",
-                 "(18, 'pat', 20, 2023)",
-                 "(19, 'lee', 10, 2024)"
+                 "(9, 'lee', 10, 2023)"
          };
          for (String studentValue : studentValues) {
             myPlanner.executeUpdate(insertDataStatement + studentValue, myTransaction);
@@ -55,6 +46,13 @@ public class CreateStudentDB {
          createTableStatement = "create table DEPT(did int, dname varchar(8))";
          myPlanner.executeUpdate(createTableStatement,myTransaction);
          System.out.println("Table DEPT created.");
+
+         //TODO: CANNOT CREATE INDEX FOR THIS TABLE FOR SOME REASON
+         //Creating Index on Department's realtion on the majorid field.
+//         createIndexStatement = "create index deptIndex on DEPT(did)";
+//         myPlanner.executeUpdate(createIndexStatement, myTransaction);
+//         System.out.println("Index for did created on dept table");
+
 
          //INSERTING DEPARTMENTS DATA
          insertDataStatement = "insert into DEPT(did, dname) values ";
@@ -73,7 +71,7 @@ public class CreateStudentDB {
          System.out.println("Table COURSE created.");
 
          //CREATING COURSES TABLE INDEX ON COURSES' RELATION ON THE TITLE FIELD
-         createIndexStatement = "create index myCoursesIndex on course(title)";
+         createIndexStatement = "create index myCoursesIndex on course(deptid)";
          myPlanner.executeUpdate(createIndexStatement, myTransaction);
          System.out.println("Index for course title has been created");
 

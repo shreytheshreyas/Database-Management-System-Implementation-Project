@@ -66,7 +66,6 @@ public class Lexer {
     * @return true if the current token is an identifier
     */
    public boolean matchId() {
-      System.out.println(tok.sval);
       return  tok.ttype==StreamTokenizer.TT_WORD && !keywords.contains(tok.sval);
    }
    

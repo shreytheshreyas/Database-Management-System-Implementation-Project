@@ -41,6 +41,7 @@ public class Transaction {
       recoveryMgr = new RecoveryMgr(this, txnum, lm, bm);
       concurMgr   = new ConcurrencyMgr();
       mybuffers = new BufferList(bm);
+
    }
    
    /**

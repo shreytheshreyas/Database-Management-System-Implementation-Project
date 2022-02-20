@@ -120,6 +120,9 @@ public class Parser {
       if (lex.matchDelim(',')) {
          lex.eatDelim(',');
          L.addAll(selectList());
+      } else if(lex.matchKeyword("join")) {
+         lex.eatKeyword("join");
+         L.addAll(selectList());
       }
       return L;
    }

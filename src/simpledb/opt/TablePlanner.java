@@ -1,6 +1,9 @@
 package simpledb.opt;
 
+import java.util.List;
 import java.util.Map;
+
+import simpledb.materialize.MergeJoinPlan;
 import simpledb.tx.Transaction;
 import simpledb.record.*;
 import simpledb.query.*;
@@ -64,12 +67,74 @@ class TablePlanner {
       Predicate joinpred = mypred.joinSubPred(myschema, currsch);
       if (joinpred == null)
          return null;
-      Plan p = makeIndexJoin(current, currsch);
-      if (p == null)
-         p = makeProductJoin(current, currsch);
-      return p;
+
+      Plan queryJoinPlan = null;
+
+      /*The query optimiser will choose which of the following join plans is ideal
+      * for a required query that is provided to the database*/
+      //queryJoinPlan = makeSortMergeJoin(current, currsch); //This is for the sort merge join plan
+      //queryJoinPlan = makeIndexJoin(current, currsch); //index join - done
+      queryJoinPlan = makeNestedLoopJoin(current, currsch); //This is for the nested loop join plan
+
+      //if (queryJoinPlan == null)
+         //queryJoinPlan = makeProductJoin(current, currsch);
+      return queryJoinPlan;
    }
-   
+
+   /* Make three of the following classes to implement Nested Loop Join:
+   * 1. NLJsimple - for each tuple in the outer relation it checks all the tuples in the inner relation
+   * 2. NLJpage - for each page in table in the outer relation you scan all the pages of the inner relation, in
+   *    contrast to NLJsimple where for each tuple of the outer relation you scan all the pages of the inner relation
+   * 3. NLJblock*/
+
+   //TODO: NEED TO IMPLEMENT FUNCTION DEFINITION
+   private Plan makeNestedLoopJoin(Plan current, Schema currsch) {
+      //Query Optimiser will decide which type of NLJ w
+
+      //get predicate terms
+      List<Term> predicateTerms = mypred.getTerms();
+
+      //1. Get LHS field of the predicate
+      String lhsField = predicateTerms.get(0).getLhs().asFieldName();
+      System.out.println(lhsField);
+
+      //2. Get RHS field of the predicate
+      String rhsField = predicateTerms.get(0).getRhs().asFieldName();
+      System.out.println(rhsField);
+      return new BlockNestedLoopJoinPlan(tx, current, myplan, rhsField, lhsField);
+//      return new BlockNestedLoopJoinPlan(tx, myplan, current, lhsField, rhsField);
+   }
+
+   //TODO: NEED TO IMPLEMENT FUNCTION DEFINITION
+   private Plan makeSortMergeJoin(Plan current, Schema currsch) {
+      boolean joinCondition = false;
+
+      //get predicate terms
+      List<Term> predicateTerms = mypred.getTerms();
+
+      //algorithm
+
+      //1. Get LHS field of the predicate
+      String lhsField = predicateTerms.get(0).getLhs().asFieldName();
+      System.out.println(lhsField);
+
+      //2. Get RHS field of the predicate
+      String rhsField = predicateTerms.get(0).getRhs().asFieldName();
+      System.out.println(rhsField);
+
+      //3. if both exist in their respective tables we call the MergeJoinPlan
+      if((myschema.hasField(lhsField) && currsch.hasField(rhsField))
+              || (myschema.hasField(rhsField) && currsch.hasField(lhsField)))
+         joinCondition = true;
+
+      System.out.println(joinCondition);
+         //4. if both conditions are satisfied call construnctor of mergejoin plan
+      if(joinCondition)
+         return new MergeJoinPlan(tx, current, myplan, rhsField, lhsField); // works :) for now :(
+//         return new MergeJoinPlan(tx, myplan, current, lhsField, rhsField);
+      return null;
+   }
+
    /**
     * Constructs a product plan of the specified plan and
     * this table.
