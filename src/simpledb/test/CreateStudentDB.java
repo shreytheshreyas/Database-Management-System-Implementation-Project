@@ -21,7 +21,7 @@ public class CreateStudentDB {
          System.out.println("Table STUDENT created.");
 
          //Creating Index on Student's realtion on the majorid field.
-         String createIndexStatement = "create index myStudentIndex on student (majorid) using btree";
+         String createIndexStatement = "create index myStudentIndex on student (sid) using btree";
          myPlanner.executeUpdate(createIndexStatement, myTransaction);
          System.out.println("Index for MajorId created on Student table");
 
@@ -49,10 +49,9 @@ public class CreateStudentDB {
 
          //TODO: CANNOT CREATE INDEX FOR THIS TABLE FOR SOME REASON
          //Creating Index on Department's realtion on the majorid field.
-//         createIndexStatement = "create index deptIndex on DEPT(did)";
-//         myPlanner.executeUpdate(createIndexStatement, myTransaction);
-//         System.out.println("Index for did created on dept table");
-
+         createIndexStatement = "create index deptIndex on dept(did)";
+         myPlanner.executeUpdate(createIndexStatement, myTransaction);
+         System.out.println("Index for did created on dept table");
 
          //INSERTING DEPARTMENTS DATA
          insertDataStatement = "insert into DEPT(did, dname) values ";
@@ -71,9 +70,9 @@ public class CreateStudentDB {
          System.out.println("Table COURSE created.");
 
          //CREATING COURSES TABLE INDEX ON COURSES' RELATION ON THE TITLE FIELD
-         createIndexStatement = "create index myCoursesIndex on course(deptid)";
-         myPlanner.executeUpdate(createIndexStatement, myTransaction);
-         System.out.println("Index for course title has been created");
+//         createIndexStatement = "create index myCoursesIndex on course(deptid)";
+//         myPlanner.executeUpdate(createIndexStatement, myTransaction);
+//         System.out.println("Index for course title has been created");
 
          //INSERTING COURSES DATA
          insertDataStatement = "insert into COURSE(cid, title, deptid) values ";
@@ -118,7 +117,7 @@ public class CreateStudentDB {
          System.out.println("Table ENROLL created.");
 
          //CREATING INDEX ON ENROLL'S RELATION ON THE SID FIELD
-         createIndexStatement = "create index myEnrollsIndex on enroll (studentid) using hash";
+         createIndexStatement = "create index enrollIndex on enroll (studentid)";
          myPlanner.executeUpdate(createIndexStatement, myTransaction);
          System.out.println("Index for StudentId created on Enroll table");
 
