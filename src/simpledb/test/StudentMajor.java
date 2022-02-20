@@ -34,8 +34,9 @@ public class StudentMajor {
 
          //INNER EQUI JOIN TEST - NEED to add INNER JOIN keyword to the list of keywords
 //         String myQuery = "SELECT deptid, did, title, dname FROM dept JOIN course ON deptid = did";
-         //String myQuery = "SELECT sid, studentid, SName, Grade FROM student JOIN enroll ON sid = studentid";
+         String myQuery = "SELECT sid, studentid, SName, Grade FROM student JOIN enroll ON sid = studentid";
 //         String myQuery = "SELECT sid, studentid, SName, Grade FROM enroll JOIN student ON sid = studentid";
+//         String myQuery = "SELECT sid, studentid, SName, Grade FROM enroll JOIN student ON studentid = sid";
          //Scanning result set
 
          //Creating a query Plan

@@ -1,16 +1,13 @@
 package simpledb.plan;
 
-import simpledb.multibuffer.ChunkPlan;
-import simpledb.multibuffer.ChunkScan;
 import simpledb.query.Scan;
 import simpledb.record.Schema;
 import simpledb.record.TableScan;
 import simpledb.tx.Transaction;
 
-public class BlockNestedLoopJoinPlan implements Plan {
+public class SimpleNestedLoopJoinPlan implements Plan {
     private Transaction tx;
-    private ChunkPlan p1;
-    private Plan p2;
+    private Plan p1, p2;
     private String fldname1, fldname2;
     private Schema sch = new Schema();
 
@@ -24,10 +21,10 @@ public class BlockNestedLoopJoinPlan implements Plan {
      * @param fldname2 the RHS join field
      * @param tx the calling transaction
      */
-    public BlockNestedLoopJoinPlan(Transaction tx,  TablePlan p1, Plan p2, String fldname1, String fldname2) {
+    public SimpleNestedLoopJoinPlan(Transaction tx, Plan p1, Plan p2, String fldname1, String fldname2) {
         this.fldname1 = fldname1;
         this.fldname2 = fldname2;
-        this.p1 = new ChunkPlan(tx, p1, p1.getTblname() ,fldname1, p1.getLayout());
+        this.p1 = p1;
         this.p2 = p2;
         this.tx = tx;
         sch.addAll(p1.schema());
@@ -40,10 +37,10 @@ public class BlockNestedLoopJoinPlan implements Plan {
      * @see simpledb.plan.Plan#open()
      */
     public Scan open() {
-        ChunkScan s1 = (ChunkScan) p1.open();
+        Scan s1 = p1.open();
         TableScan s2 = (TableScan) p2.open();
 
-        return new BlockNestedLoopJoinScan(tx, s1, s2, fldname1, fldname2); //need to change later
+        return new SimpleNestedLoopJoinScan(tx, s1, s2, fldname1, fldname2); //need to change later
     }
 
     /**

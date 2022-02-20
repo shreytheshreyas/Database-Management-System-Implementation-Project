@@ -1,6 +1,5 @@
 package simpledb.plan;
 
-import simpledb.multibuffer.ChunkScan;
 import simpledb.query.*;
 import simpledb.record.TableScan;
 import simpledb.tx.Transaction;
@@ -9,9 +8,9 @@ import simpledb.tx.Transaction;
  * The Scan class for the <i>mergejoin</i> operator.
  * @author Edward Sciore
  */
-public class BlockNestedLoopJoinScan implements Scan {
+public class SimpleNestedLoopJoinScan implements Scan {
     private Transaction tx;
-    private ChunkScan s1;
+    private Scan s1;
     private TableScan s2;
     private String fldname1, fldname2;
     private Constant joinval = null;
@@ -23,7 +22,7 @@ public class BlockNestedLoopJoinScan implements Scan {
      * @param fldname1 the LHS join field
      * @param fldname2 the RHS join field
      */
-    public BlockNestedLoopJoinScan(Transaction tx, ChunkScan s1, TableScan s2, String fldname1, String fldname2) {
+    public SimpleNestedLoopJoinScan(Transaction tx, Scan s1, TableScan s2, String fldname1, String fldname2) {
         this.s1 = s1;
         this.s2 = s2;
         this.fldname1 = fldname1;
@@ -74,6 +73,17 @@ public class BlockNestedLoopJoinScan implements Scan {
         //3. for every matching record between the records in the outer relation block and
         //the records of the inner relation page, you place the record in an output buffer page -- conditional and output
 
+//        while (true) {
+//            while (s2.next()) {
+//                if (s1.getVal(fldname1).equals(s2.getVal(fldname2))) {
+//                    return true;
+//                }
+//            }
+//            s2.beforeFirst();
+//            if (!s1.next())
+//                return false;
+//        }
+
         s2.beforeFirst();
         while(s1.next()) {
             Constant record1 = s1.getVal(fldname1);
@@ -83,6 +93,8 @@ public class BlockNestedLoopJoinScan implements Scan {
                     return true;
                 }
             }
+// select * from student join enroll on sid = studentid;
+// select * from enroll join student on studentid = sid;
         }
 
         return false;

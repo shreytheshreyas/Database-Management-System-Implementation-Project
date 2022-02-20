@@ -72,9 +72,10 @@ class TablePlanner {
 
       /*The query optimiser will choose which of the following join plans is ideal
       * for a required query that is provided to the database*/
-      //queryJoinPlan = makeSortMergeJoin(current, currsch); //This is for the sort merge join plan
+
+      queryJoinPlan = makeSortMergeJoin(current, currsch); //This is for the sort merge join plan
       //queryJoinPlan = makeIndexJoin(current, currsch); //index join - done
-      queryJoinPlan = makeNestedLoopJoin(current, currsch); //This is for the nested loop join plan
+      //queryJoinPlan = makeNestedLoopJoin(current, currsch); //This is for the nested loop join plan
 
       //if (queryJoinPlan == null)
          //queryJoinPlan = makeProductJoin(current, currsch);
@@ -89,6 +90,7 @@ class TablePlanner {
 
    //TODO: NEED TO IMPLEMENT FUNCTION DEFINITION
    private Plan makeNestedLoopJoin(Plan current, Schema currsch) {
+      boolean joinCondition = false;
       //Query Optimiser will decide which type of NLJ w
 
       //get predicate terms
@@ -101,8 +103,14 @@ class TablePlanner {
       //2. Get RHS field of the predicate
       String rhsField = predicateTerms.get(0).getRhs().asFieldName();
       System.out.println(rhsField);
-      return new BlockNestedLoopJoinPlan(tx, current, myplan, rhsField, lhsField);
-//      return new BlockNestedLoopJoinPlan(tx, myplan, current, lhsField, rhsField);
+
+      //3. if both exist in their respective tables we call the SimpleNestedJoinPlan
+      if(myschema.hasField(lhsField) && currsch.hasField(rhsField))
+         return new SimpleNestedLoopJoinPlan(tx, current, myplan, rhsField, lhsField);
+      else if(myschema.hasField(rhsField) && currsch.hasField(lhsField))
+         return new SimpleNestedLoopJoinPlan(tx, current, myplan, lhsField, rhsField);
+
+      return null;
    }
 
    //TODO: NEED TO IMPLEMENT FUNCTION DEFINITION
@@ -123,15 +131,21 @@ class TablePlanner {
       System.out.println(rhsField);
 
       //3. if both exist in their respective tables we call the MergeJoinPlan
-      if((myschema.hasField(lhsField) && currsch.hasField(rhsField))
-              || (myschema.hasField(rhsField) && currsch.hasField(lhsField)))
-         joinCondition = true;
-
-      System.out.println(joinCondition);
-         //4. if both conditions are satisfied call construnctor of mergejoin plan
-      if(joinCondition)
-         return new MergeJoinPlan(tx, current, myplan, rhsField, lhsField); // works :) for now :(
+//      if((myschema.hasField(lhsField) && currsch.hasField(rhsField))
+//              || (myschema.hasField(rhsField) && currsch.hasField(lhsField)))
+//         joinCondition = true;
+//
+//      System.out.println(joinCondition);
+//         //4. if both conditions are satisfied call construnctor of mergejoin plan
+//      if(joinCondition)
+//         return new MergeJoinPlan(tx, current, myplan, rhsField, lhsField); // works :) for now :(
 //         return new MergeJoinPlan(tx, myplan, current, lhsField, rhsField);
+
+      if(myschema.hasField(lhsField) && currsch.hasField(rhsField))
+         return new SimpleNestedLoopJoinPlan(tx, current, myplan, rhsField, lhsField);
+      else if(myschema.hasField(rhsField) && currsch.hasField(lhsField))
+         return new SimpleNestedLoopJoinPlan(tx, current, myplan, lhsField, rhsField);
+
       return null;
    }
 
