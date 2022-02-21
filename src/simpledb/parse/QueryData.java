@@ -12,7 +12,7 @@ public class QueryData {
    private List<String> fields;
    private Collection<String> tables;
    private Predicate pred;
-   private LinkedHashMap<String, String> orderFields;
+   private LinkedHashMap<String, String> orderFields = new LinkedHashMap<>();
    /**
     * Saves the field and table list and predicate.
     */
@@ -64,7 +64,10 @@ public class QueryData {
    }
 
    public boolean hasOrderFields() {
-      return !orderFields.isEmpty();
+      if(orderFields != null)
+         return !orderFields.isEmpty();
+      else
+         return false;
    }
 
    public LinkedHashMap<String, String> orderFields() {
