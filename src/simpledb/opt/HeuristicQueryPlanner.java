@@ -38,6 +38,7 @@ public class HeuristicQueryPlanner implements QueryPlanner {
       
       // Step 2:  Choose the lowest-size plan to begin the join order
       Plan currentplan = getLowestSelectPlan();
+      System.out.println("select (" + data.pred().toString() + ")");
       
       // Step 3:  Repeatedly add a plan to the join order
       while (!tableplanners.isEmpty()) {
@@ -47,6 +48,10 @@ public class HeuristicQueryPlanner implements QueryPlanner {
          else  // no applicable join
             currentplan = getLowestProductPlan(currentplan);
       }
+      String joinString = String.valueOf(currentplan);
+      System.out.println((joinString.split("@")[0]).split("\\.")[2]);
+
+      
 
       //Do we project the field names first? then we remove duplicates and orderby?
 //      System.out.println(data.fields());

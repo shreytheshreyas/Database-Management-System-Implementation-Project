@@ -98,7 +98,6 @@ public class Schema {
     * @return the integer type of the field
     */
    public int type(String fldname) {
-	  System.out.println(info);
       return info.get(fldname).type;
    }
    

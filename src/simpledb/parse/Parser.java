@@ -36,44 +36,48 @@ public class Parser {
          return new Expression(constant());
    }
    
+   public String opr() {
+	   return lex.eatOpr();
+   }
+   
    public Term term() {
       Expression lhs = expression();
 //      ORIGINAL IMPLEMENTATION
 //      lex.eatDelim('=');
 
 //      MY IMPLEMENTATION
-      String relationalOp = "=";
+      String relationalOp = opr();
 
-      if (lex.matchDelim('=')) {
-         lex.eatDelim('=');
-      } else if (lex.matchDelim('<')) {
-         lex.eatDelim('<');
-         relationalOp = "<";
-         if (lex.matchDelim('=')) {
-            lex.eatDelim('=');
-            relationalOp = "<=";
-         }
-      } else if (lex.matchDelim('>')) {
-         lex.eatDelim('>');
-         relationalOp = ">";
-         if (lex.matchDelim('=')) {
-            lex.eatDelim('=');
-            relationalOp = ">=";
-         }
-      } else if (lex.matchDelim('!')) {
-         lex.eatDelim('!');
-         if (lex.matchDelim('=')) {
-            lex.eatDelim('=');
-            relationalOp = "!=";
-         } else {
-            //THROW EXCEPTION FOR INVALID OPERATION 1
-            System.out.println("The specified operator does not exist");
-            System.exit(0);
-         }
-      } else {
-         System.out.println("The specified operator does not exist");
-         System.exit(0);
-      }
+//      if (lex.matchDelim('=')) {
+//         lex.eatDelim('=');
+//      } else if (lex.matchDelim('<')) {
+//         lex.eatDelim('<');
+//         relationalOp = "<";
+//         if (lex.matchDelim('=')) {
+//            lex.eatDelim('=');
+//            relationalOp = "<=";
+//         }
+//      } else if (lex.matchDelim('>')) {
+//         lex.eatDelim('>');
+//         relationalOp = ">";
+//         if (lex.matchDelim('=')) {
+//            lex.eatDelim('=');
+//            relationalOp = ">=";
+//         }
+//      } else if (lex.matchDelim('!')) {
+//         lex.eatDelim('!');
+//         if (lex.matchDelim('=')) {
+//            lex.eatDelim('=');
+//            relationalOp = "!=";
+//         } else {
+//            //THROW EXCEPTION FOR INVALID OPERATION 1
+//            System.out.println("The specified operator does not exist");
+//            System.exit(0);
+//         }
+//      } else {
+//         System.out.println("The specified operator does not exist");
+//         System.exit(0);
+//      }
 
       Expression rhs = expression();
       return new Term(lhs, rhs, relationalOp);

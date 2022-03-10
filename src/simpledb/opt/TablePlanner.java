@@ -1,6 +1,7 @@
 package simpledb.opt;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 
 import simpledb.materialize.MergeJoinPlan;
@@ -23,6 +24,7 @@ class TablePlanner {
    private Map<String,IndexInfo> indexes;
    private Transaction tx;
    private boolean isDistinct;
+   private ArrayList<String> queryPlanComponents = new ArrayList<String>();
    
    /**
     * Creates a new table planner.
@@ -41,6 +43,14 @@ class TablePlanner {
       myschema = myplan.schema();
       indexes  = mdm.getIndexInfo(tblname, tx);
       this.isDistinct = isDistinct;
+   }
+   
+   public void addQueryComponent(String component) {
+	   queryPlanComponents.add(component);
+   }
+   
+   public ArrayList<String> getQueryComponents() {
+	   return queryPlanComponents;
    }
    
    /**
@@ -158,6 +168,7 @@ class TablePlanner {
          if (val != null) {
             IndexInfo ii = indexes.get(fldname);
             System.out.println("index on " + fldname + " used");
+//            addQueryComponent("Index Select Plan on" + fldname)
             return new IndexSelectPlan(myplan, ii, val);
          }
       }

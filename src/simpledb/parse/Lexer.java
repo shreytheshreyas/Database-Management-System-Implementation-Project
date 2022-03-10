@@ -10,6 +10,7 @@ import java.io.*;
 public class Lexer {
    private Collection<String> keywords;
    private StreamTokenizer tok;
+   private Collection<String> newOperators;
    
    /**
     * Creates a new lexical analyzer for SQL statement s.
@@ -17,10 +18,13 @@ public class Lexer {
     */
    public Lexer(String s) {
       initKeywords();
+      initNewOperators();
       tok = new StreamTokenizer(new StringReader(s));
       tok.ordinaryChar('.');   //disallow "." in identifiers
       tok.wordChars('_', '_'); //allow "_" in identifiers
       tok.lowerCaseMode(true); //ids and keywords are converted
+      tok.wordChars('!', '!');
+      tok.wordChars(60, 62);
       nextToken();
    }
    
@@ -67,6 +71,19 @@ public class Lexer {
     */
    public boolean matchId() {
       return  tok.ttype==StreamTokenizer.TT_WORD && !keywords.contains(tok.sval);
+   }
+   
+   public boolean matchOpr() {
+	   return newOperators.contains(tok.sval);
+   }
+   
+   public String eatOpr() {
+	   if(!matchOpr()) {
+		   throw new BadSyntaxException();
+	   }
+	   String s = tok.sval;
+	   nextToken();
+	   return s;
    }
    
 //Methods to "eat" the current token
@@ -160,5 +177,9 @@ public class Lexer {
                                "insert", "into", "values", "delete", "update", "set", 
                                "create", "table", "int", "varchar", "view", "as", "index", "on",
                                "using", "hash", "btree", "order", "by", "asc", "desc", "inner", "join");
+   }
+   
+   private void initNewOperators() {
+	   newOperators = Arrays.asList("=", "<", "<=", ">", ">=", "!=", "<>");
    }
 }
