@@ -16,6 +16,7 @@ public class SortPlan implements Plan {
    private Schema sch;
    private LinkedHashMap<String, String> sortFields;
    private RecordComparator comp;
+   private boolean isDistinct;
 
    /**
     * Create a sort plan for the specified query.
@@ -30,12 +31,13 @@ public class SortPlan implements Plan {
       sch = p.schema();
       comp = new RecordComparator(fields);
    }
-   public SortPlan(Transaction tx, Plan p, LinkedHashMap<String, String> sortFields) {
+   public SortPlan(Transaction tx, Plan p, LinkedHashMap<String, String> sortFields, boolean isDistinct) {
       this.tx = tx;
       this.p = p;
       this.sortFields = sortFields;
       sch = p.schema();
       comp = new RecordComparator(sortFields);
+      this.isDistinct = isDistinct;
    }
    
    /**

@@ -22,6 +22,7 @@ class TablePlanner {
    private Schema myschema;
    private Map<String,IndexInfo> indexes;
    private Transaction tx;
+   private boolean isDistinct;
    
    /**
     * Creates a new table planner.
@@ -33,12 +34,13 @@ class TablePlanner {
     * @param mypred the query predicate
     * @param tx the calling transaction
     */
-   public TablePlanner(String tblname, Predicate mypred, Transaction tx, MetadataMgr mdm) {
+   public TablePlanner(String tblname, Predicate mypred, Transaction tx, MetadataMgr mdm, boolean isDistinct) {
       this.mypred  = mypred;
       this.tx  = tx;
       myplan   = new TablePlan(tx, tblname, mdm);
       myschema = myplan.schema();
       indexes  = mdm.getIndexInfo(tblname, tx);
+      this.isDistinct = isDistinct;
    }
    
    /**
@@ -74,7 +76,7 @@ class TablePlanner {
       * for a required query that is provided to the database*/
 
       //queryJoinPlan = makeSortMergeJoin(current, currsch); //This is for the sort merge join plan
-      queryJoinPlan = makeIndexJoin(current, currsch); //index join - done
+      queryJoinPlan = makeSortMergeJoin(current, currsch); //index join - done
       //queryJoinPlan = makeNestedLoopJoin(current, currsch); //This is for the nested loop join plan
 
       //if (queryJoinPlan == null)
@@ -132,9 +134,9 @@ class TablePlanner {
 
       //3. if both exist in their respective tables we call the MergeJoinPlan
       if(myschema.hasField(lhsField) && currsch.hasField(rhsField))
-         return new MergeJoinPlan(tx, current, myplan, rhsField, lhsField);
+         return new MergeJoinPlan(tx, current, myplan, rhsField, lhsField, isDistinct); //here
       else if(myschema.hasField(rhsField) && currsch.hasField(lhsField))
-         return new MergeJoinPlan(tx, current, myplan, lhsField, rhsField);
+         return new MergeJoinPlan(tx, current, myplan, lhsField, rhsField, isDistinct); //here
 
       return null;
    }

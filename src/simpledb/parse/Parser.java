@@ -90,8 +90,17 @@ public class Parser {
    
 // Methods for parsing queries
    
+   private boolean distinct() { //here
+       if (lex.matchKeyword("distinct")) {
+           lex.eatKeyword("distinct");
+           return true;
+       }
+       return false;
+   }
+   
    public QueryData query() {
       lex.eatKeyword("select");
+      boolean isDistinct = distinct();
       List<String> fields = selectList();
       lex.eatKeyword("from");
       Collection<String> tables = tableList(); //Collection of Database relations
@@ -111,7 +120,7 @@ public class Parser {
             orderFields = orderList();
          }
       }
-      return new QueryData(fields, tables, pred, orderFields);
+      return new QueryData(fields, tables, pred, orderFields, isDistinct); //here
    }
    
    private List<String> selectList() {

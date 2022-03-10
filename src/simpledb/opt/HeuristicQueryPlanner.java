@@ -6,6 +6,7 @@ import simpledb.metadata.MetadataMgr;
 import simpledb.parse.QueryData;
 import simpledb.plan.*;
 import simpledb.materialize.*;
+import simpledb.materialize.DistinctPlan;
 
 /**
  * A query planner that optimizes using a heuristic-based algorithm.
@@ -31,7 +32,7 @@ public class HeuristicQueryPlanner implements QueryPlanner {
       
       // Step 1:  Create a TablePlanner object for each mentioned table
       for (String tblname : data.tables()) {
-         TablePlanner tp = new TablePlanner(tblname, data.pred(), tx, mdm);
+         TablePlanner tp = new TablePlanner(tblname, data.pred(), tx, mdm, data.isDistinct()); //here
          tableplanners.add(tp);
       }
       
@@ -47,13 +48,29 @@ public class HeuristicQueryPlanner implements QueryPlanner {
             currentplan = getLowestProductPlan(currentplan);
       }
 
+      //Do we project the field names first? then we remove duplicates and orderby?
+//      System.out.println(data.fields());
+//      Plan p = new ProjectPlan(currentplan, data.fields()); //here
+//      
+      
+      // Step 5: Add a distinct plan if isDistinct is true
+      if (data.isDistinct()) {
+    	 LinkedHashMap<String, String> test = new LinkedHashMap<>();
+    	 for (String field : data.fields()) {
+    		 test.put(field, "asc");
+    	}
+         currentplan = new DistinctPlan(tx, currentplan, test); //here
+      }
+      
+      //
       // Step 4: Checking if the query has order by
       if(data.hasOrderFields()) {
-         currentplan = new SortPlan(tx, currentplan, data.orderFields());
+         currentplan = new SortPlan(tx, currentplan, data.orderFields(), data.isDistinct());
       }
-
+      
+      
       // Step 5.  Project on the field names and return
-      return new ProjectPlan(currentplan, data.fields());
+      return new ProjectPlan(currentplan, data.fields()); //here
    }
    
    private Plan getLowestSelectPlan() {

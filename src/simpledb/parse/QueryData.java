@@ -13,15 +13,19 @@ public class QueryData {
    private Collection<String> tables;
    private Predicate pred;
    private LinkedHashMap<String, String> orderFields = new LinkedHashMap<>();
+   private boolean isDistinct;
    /**
     * Saves the field and table list and predicate.
     */
-   public QueryData(List<String> fields, Collection<String> tables, Predicate pred, LinkedHashMap<String, String> orderFields) {
+   public QueryData(List<String> fields, Collection<String> tables, Predicate pred, LinkedHashMap<String, String> orderFields, boolean isDistinct) {
       this.fields = fields;
       this.tables = tables;
       this.pred = pred;
       this.orderFields = orderFields;
+      this.isDistinct = isDistinct;
    }
+   
+   public boolean isDistinct() { return isDistinct; } //here
    
    /**
     * Returns the fields mentioned in the select clause.

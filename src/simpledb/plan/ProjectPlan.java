@@ -20,8 +20,10 @@ public class ProjectPlan implements Plan {
     */
    public ProjectPlan(Plan p, List<String> fieldlist) {
       this.p = p;
-      for (String fldname : fieldlist)
-         schema.add(fldname, p.schema());
+      for (String fldname : fieldlist) {
+//    	  System.out.println(data.fields());
+    	  schema.add(fldname, p.schema());
+      }
    }
 
    /**

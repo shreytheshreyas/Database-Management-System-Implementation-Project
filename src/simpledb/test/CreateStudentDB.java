@@ -35,7 +35,16 @@ public class CreateStudentDB {
                "(6, 'kim', 20, 2020)",
                "(7, 'art', 30, 2021)",
                "(8, 'pat', 20, 2019)",
-                 "(9, 'lee', 10, 2023)"
+                 "(9, 'lee', 10, 2023)",
+                 "(1, 'joe', 10, 2021)",
+                 "(2, 'amy', 20, 2020)",
+                 "(3, 'max', 10, 2022)",
+                 "(4, 'sue', 20, 2022)",
+                 "(5, 'bob', 30, 2020)",
+                 "(6, 'kim', 20, 2020)",
+                 "(7, 'art', 30, 2021)",
+                 "(8, 'pat', 20, 2019)",
+                   "(9, 'lee', 10, 2023)"
          };
          for (String studentValue : studentValues) {
             myPlanner.executeUpdate(insertDataStatement + studentValue, myTransaction);
@@ -57,6 +66,13 @@ public class CreateStudentDB {
          insertDataStatement = "insert into DEPT(did, dname) values ";
          String[] departmentValues = {"(10, 'compsci')",
                               "(20, 'math')",
+                              "(30, 'drama')",
+                              "(10, 'compsci')",
+                              "(20, 'math')",
+                              "(30, 'drama')",
+                              "(10, 'compsci')",
+                              "(20, 'math')",
+                              "(30, 'drama')",
                               "(30, 'drama')"};
          for (String departmentValue : departmentValues) {
             String command = insertDataStatement + departmentValue;
