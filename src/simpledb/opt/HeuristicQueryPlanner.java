@@ -7,6 +7,8 @@ import simpledb.parse.QueryData;
 import simpledb.plan.*;
 import simpledb.materialize.*;
 import simpledb.materialize.DistinctPlan;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * A query planner that optimizes using a heuristic-based algorithm.
@@ -15,6 +17,7 @@ import simpledb.materialize.DistinctPlan;
 public class HeuristicQueryPlanner implements QueryPlanner {
    private Collection<TablePlanner> tableplanners = new ArrayList<>();
    private MetadataMgr mdm;
+   HashMap<TablePlanner, String> tableNames = new HashMap<TablePlanner, String>();
    
    public HeuristicQueryPlanner(MetadataMgr mdm) {
       this.mdm = mdm;
@@ -27,29 +30,42 @@ public class HeuristicQueryPlanner implements QueryPlanner {
     * to be first in the join order.
     * H2. Add the table to the join order which
     * results in the smallest output.
+    * 
+    * select sname, prof from student, enroll, section where sid = studentid AND sectionid = sectid
     */
    public Plan createPlan(QueryData data, Transaction tx) {
       
       // Step 1:  Create a TablePlanner object for each mentioned table
       for (String tblname : data.tables()) {
          TablePlanner tp = new TablePlanner(tblname, data.pred(), tx, mdm, data.isDistinct()); //here
+         tableNames.put(tp, tblname);
          tableplanners.add(tp);
       }
       
       // Step 2:  Choose the lowest-size plan to begin the join order
       Plan currentplan = getLowestSelectPlan();
-      System.out.println("select (" + data.pred().toString() + ")");
+      //System.out.println("select (" + data.pred().toString() + ")");
       
       // Step 3:  Repeatedly add a plan to the join order
+      //currentplan = (enrollxsection)xstudent
+      Integer count = tableplanners.size();
       while (!tableplanners.isEmpty()) {
          Plan p = getLowestJoinPlan(currentplan);
          if (p != null)
             currentplan = p;
-         else  // no applicable join
+         else  { // no applicable join
+        	System.out.println("i entered getLowestProductPlan :DDDD");
             currentplan = getLowestProductPlan(currentplan);
+         }
+//         if (count > 1) {
+//        	 System.out.println(")x");
+//         } else {
+//        	 count--;
+//         }
       }
-      String joinString = String.valueOf(currentplan);
-      System.out.println((joinString.split("@")[0]).split("\\.")[2]);
+      
+      //String joinString = String.valueOf(currentplan);
+      //System.out.println((joinString.split("@")[0]).split("\\.")[2]);
 
       
 
@@ -89,6 +105,7 @@ public class HeuristicQueryPlanner implements QueryPlanner {
          }
       }
       tableplanners.remove(besttp);
+      System.out.println("im from getLowestSelectPlan: (" + tableNames.get(besttp) + "x");
       return bestplan;
    }
    
@@ -102,8 +119,11 @@ public class HeuristicQueryPlanner implements QueryPlanner {
             bestplan = plan;
          }
       }
+      
       if (bestplan != null)
+    	 System.out.println("im from getLowestJoinPlan: " + tableNames.get(besttp));
          tableplanners.remove(besttp);
+      
       return bestplan;
    }
    

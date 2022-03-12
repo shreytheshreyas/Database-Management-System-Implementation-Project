@@ -110,11 +110,11 @@ class TablePlanner {
 
       //1. Get LHS field of the predicate
       String lhsField = predicateTerms.get(0).getLhs().asFieldName();
-      System.out.println(lhsField);
+      //System.out.println(lhsField);
 
       //2. Get RHS field of the predicate
       String rhsField = predicateTerms.get(0).getRhs().asFieldName();
-      System.out.println(rhsField);
+      //System.out.println(rhsField);
 
       //3. if both exist in their respective tables we call the SimpleNestedJoinPlan
       if(myschema.hasField(lhsField) && currsch.hasField(rhsField))
@@ -136,11 +136,11 @@ class TablePlanner {
 
       //1. Get LHS field of the predicate
       String lhsField = predicateTerms.get(0).getLhs().asFieldName();
-      System.out.println(lhsField);
+      //System.out.println(lhsField);
 
       //2. Get RHS field of the predicate
       String rhsField = predicateTerms.get(0).getRhs().asFieldName();
-      System.out.println(rhsField);
+      //System.out.println(rhsField);
 
       //3. if both exist in their respective tables we call the MergeJoinPlan
       if(myschema.hasField(lhsField) && currsch.hasField(rhsField))
@@ -169,7 +169,7 @@ class TablePlanner {
             IndexInfo ii = indexes.get(fldname);
             System.out.println("index on " + fldname + " used");
 //            addQueryComponent("Index Select Plan on" + fldname)
-            return new IndexSelectPlan(myplan, ii, val);
+            return new IndexSelectPlan(myplan, ii, val, mypred);
          }
       }
       return null;

@@ -11,6 +11,7 @@ import simpledb.record.*;
  */
 public class Parser {
    private Lexer lex;
+   private HashMap<String, String> tablesFieldsInput = new HashMap<String, String>();
    
    public Parser(String s) {
       lex = new Lexer(s);
@@ -129,7 +130,13 @@ public class Parser {
    
    private List<String> selectList() {
       List<String> L = new ArrayList<String>();
-      L.add(field());
+      String attribute = field();
+      String tableName = attribute.split("\\.")[0];
+      String fieldName = attribute.split("\\.")[1];
+      
+      tablesFieldsInput.put(tableName, fieldName);
+      
+      L.add(fieldName);
       if (lex.matchDelim(',')) {
          lex.eatDelim(',');
          L.addAll(selectList());
