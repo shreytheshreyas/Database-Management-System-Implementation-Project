@@ -47,7 +47,12 @@ public class HeuristicQueryPlanner implements QueryPlanner {
             currentplan = getLowestProductPlan(currentplan);
       }
 
-      // Step 4: Checking if the query has order by
+      //NEW STEP - checking if the query needs to have a group by plan
+//      if(data.hasGroupByFields()) {
+//         currentplan = new GroupByPlan(currentplan, data.getGroupByFields(), )
+//      }
+
+      // Step 4: Checking if the query  has order by
       if(data.hasOrderFields()) {
          currentplan = new SortPlan(tx, currentplan, data.orderFields());
       }

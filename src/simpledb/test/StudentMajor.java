@@ -33,33 +33,38 @@ public class StudentMajor {
 
 
          //INNER EQUI JOIN TEST - NEED to add INNER JOIN keyword to the list of keywords
-         String myQuery = "SELECT deptid, did, title, dname FROM dept JOIN course ON did = deptid";
+//         String myQuery = "SELECT deptid, did, title, dname FROM dept JOIN course ON did = deptid";
 //         String myQuery = "SELECT sid, studentid, SName, Grade FROM student JOIN enroll ON sid = studentid";
 //         String myQuery = "SELECT sid, studentid, SName, Grade FROM enroll JOIN student ON sid = studentid";
 //         String myQuery = "SELECT sid, studentid, SName, Grade FROM enroll JOIN student ON studentid = sid";
          //Scanning result set
 
+         //GROUP BY QUERY TEST
+         //String myQuery = "SELECT deptid, count(title) FROM COURSE GROUP BY deptid";
          //Creating a query Plan
+         String myQuery = "SELECT sid FROM STUDENT sid > 8";
          Plan myPlan = myPlanner.createQueryPlan(myQuery, myTransaction);
          Scan resultScanner = myPlan.open();
 
          System.out.println("deptid\tdid\ttitle\tdname");
          while (resultScanner.next()) {
-            Integer deptid = resultScanner.getInt("deptid");
-            Integer did = resultScanner.getInt("did");
-            String title = resultScanner.getString("title");
-            String dname = resultScanner.getString("dname");
+//            Integer deptid = resultScanner.getInt("deptid");
+//            Integer did = resultScanner.getInt("did");
+//            String title = resultScanner.getString("title");
+//            String dname = resultScanner.getString("dname");
 
-//            Integer sid = resultScanner.getInt("sid");
+            Integer sid = resultScanner.getInt("sid");
 //            Integer studentid = resultScanner.getInt("studentid");
 //            String name = resultScanner.getString("sname");
 //            String grade = resultScanner.getString("grade");
-            System.out.println(deptid+ "\t\t\t\t"+ did + "\t\t\t\t" + title + "\t\t\t\t" + dname);
+//            System.out.println(deptid+ "\t\t\t\t"+ did + "\t\t\t\t" + title + "\t\t\t\t" + dname);
+            System.out.println(sid);
 //            System.out.println(sid+ "\t\t\t\t"+ studentid + "\t\t\t\t" + name + "\t\t\t\t" + grade);
 //            System.out.println(studentName+ "\t\t\t\t" + sid);
 
          }
 
+         System.out.println("Query was a success");
          resultScanner.close();
          myTransaction.commit();
       }

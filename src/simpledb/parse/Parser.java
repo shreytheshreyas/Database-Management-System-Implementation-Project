@@ -95,6 +95,8 @@ public class Parser {
       List<String> fields = selectList();
       lex.eatKeyword("from");
       Collection<String> tables = tableList(); //Collection of Database relations
+
+      //LOGIC FOR WHERE
       Predicate pred = new Predicate();
       if (lex.matchKeyword("where")) {
          lex.eatKeyword("where");
@@ -103,6 +105,18 @@ public class Parser {
          lex.eatKeyword("on");
          pred = predicate();
       }
+
+      //LOGIC FOR GROUP BY
+      ArrayList<String> groupByFields = null;
+      if(lex.matchKeyword("group")) {
+         lex.eatKeyword("group");
+         if(lex.matchKeyword("by")) {
+            lex.eatKeyword("by");
+            groupByFields = groupFieldList();
+         }
+      }
+
+      //LOGIC FOR ORDER BY
       LinkedHashMap<String, String> orderFields = null;
       if(lex.matchKeyword("order")) {
          lex.eatKeyword("order");
@@ -111,12 +125,42 @@ public class Parser {
             orderFields = orderList();
          }
       }
-      return new QueryData(fields, tables, pred, orderFields);
+      return new QueryData(fields, tables, pred, orderFields, groupByFields);
    }
    
    private List<String> selectList() {
       List<String> L = new ArrayList<String>();
-      L.add(field());
+      //need to add code to deal with aggregate function
+      if(lex.matchKeyword("count")) {
+         lex.eatKeyword("count");
+         lex.eatDelim('(');
+         L.add(field());
+         lex.eatDelim(')');
+      } else if(lex.matchKeyword("max")) {
+         lex.eatKeyword("max");
+         lex.eatDelim('(');
+         L.add(field());
+         lex.eatDelim(')');
+      } else if(lex.matchKeyword("min")) {
+         lex.eatKeyword("min");
+         lex.eatDelim('(');
+         L.add(field());
+         lex.eatDelim(')');
+      } else if(lex.matchKeyword("sum")) {
+         lex.eatKeyword("sum");
+         lex.eatDelim('(');
+         L.add(field());
+         lex.eatDelim(')');
+      } else if(lex.matchKeyword("avg")) {
+         lex.eatKeyword("avg");
+         lex.eatDelim('(');
+         L.add(field());
+         lex.eatDelim(')');
+      } else {
+         L.add(field());
+      }
+
+
       if (lex.matchDelim(',')) {
          lex.eatDelim(',');
          L.addAll(selectList());
@@ -145,6 +189,17 @@ public class Parser {
 //      }
       return myMap;
    }
+
+   private ArrayList<String> groupFieldList() {
+      ArrayList<String> myList  = new ArrayList<>();
+      myList.add(field());
+      if(lex.matchDelim(',')) {
+         myList.addAll(groupFieldList());
+      }
+
+      return myList;
+   }
+
    private Collection<String> tableList() {
       Collection<String> L = new ArrayList<String>();
       L.add(lex.eatId());

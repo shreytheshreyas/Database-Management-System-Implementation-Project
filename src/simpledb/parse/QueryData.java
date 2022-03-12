@@ -13,14 +13,18 @@ public class QueryData {
    private Collection<String> tables;
    private Predicate pred;
    private LinkedHashMap<String, String> orderFields = new LinkedHashMap<>();
+   private List<String> groupByFields;
+   private List<String> groupByAggFunctions;
    /**
     * Saves the field and table list and predicate.
     */
-   public QueryData(List<String> fields, Collection<String> tables, Predicate pred, LinkedHashMap<String, String> orderFields) {
+   public QueryData(List<String> fields, Collection<String> tables, Predicate pred, LinkedHashMap<String,
+           String> orderFields, ArrayList<String> groupByFields) {
       this.fields = fields;
       this.tables = tables;
       this.pred = pred;
       this.orderFields = orderFields;
+      this.groupByFields = groupByFields;
    }
    
    /**
@@ -70,7 +74,18 @@ public class QueryData {
          return false;
    }
 
+   public boolean hasGroupByFields() {
+      if(groupByFields != null)
+         return !groupByFields.isEmpty();
+      else
+         return false;
+   }
+
    public LinkedHashMap<String, String> orderFields() {
       return orderFields;
+   }
+
+   public List<String> getGroupByFields() {
+      return groupByFields;
    }
 }
