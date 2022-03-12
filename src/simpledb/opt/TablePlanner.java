@@ -90,7 +90,7 @@ class TablePlanner {
       //queryJoinPlan = makeNestedLoopJoin(current, currsch); //This is for the nested loop join plan
 
       //if (queryJoinPlan == null)
-         //queryJoinPlan = makeProductJoin(current, currsch);
+//         queryJoinPlan = makeProductJoin(current, currsch);
       return queryJoinPlan;
    }
 
@@ -164,11 +164,16 @@ class TablePlanner {
    
    private Plan makeIndexSelect() {
       for (String fldname : indexes.keySet()) {
+//    	  System.out.println("[MakeIndexSelect()] " + fldname);
+//    	  System.out.println("[MakeIndexSelect()] " + mypred);
          Constant val = mypred.equatesWithConstant(fldname);
          if (val != null) {
             IndexInfo ii = indexes.get(fldname);
             System.out.println("index on " + fldname + " used");
 //            addQueryComponent("Index Select Plan on" + fldname)
+//            System.out.println("[MakeIndexSelect()] " + myplan);
+//            System.out.println("[MakeIndexSelect()] " + ii);
+//            System.out.println("[MakeIndexSelect()] " + val);
             return new IndexSelectPlan(myplan, ii, val);
          }
       }

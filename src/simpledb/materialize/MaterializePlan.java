@@ -23,6 +23,11 @@ public class MaterializePlan implements Plan {
       this.tx = tx;
    }
    
+   
+   public String getPlanType() {
+	   return "";
+   }
+   
    /**
     * This method loops through the underlying query,
     * copying its output records into a temporary table.

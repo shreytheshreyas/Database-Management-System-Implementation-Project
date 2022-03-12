@@ -38,7 +38,8 @@ public class Constant implements Comparable<Constant> {
          return 0;
       if ((ival != null && c.ival == null) || (sval != null && c.sval == null))
          return 0;
-      return (ival != null) ? ival.compareTo(c.ival) : sval.compareTo(c.sval);
+	   
+	   return (ival != null) ? ival.compareTo(c.ival) : sval.compareTo(c.sval);
    }
    
    public int hashCode() {

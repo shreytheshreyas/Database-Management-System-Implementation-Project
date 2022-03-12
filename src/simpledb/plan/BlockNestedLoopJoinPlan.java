@@ -13,6 +13,7 @@ public class BlockNestedLoopJoinPlan implements Plan {
     private Plan p2;
     private String fldname1, fldname2;
     private Schema sch = new Schema();
+    private String planType1, planType2;
 
     /**
      * Creates a mergejoin plan for the two specified queries.
@@ -33,6 +34,10 @@ public class BlockNestedLoopJoinPlan implements Plan {
         sch.addAll(p1.schema());
         sch.addAll(p2.schema());
     }
+    
+    public String getPlanType() {
+ 	   return planType1 + "|"+ planType2;
+    }
 
     /** The method first sorts its two underlying scans
      * on their join field. It then returns a mergejoin scan
@@ -41,7 +46,11 @@ public class BlockNestedLoopJoinPlan implements Plan {
      */
     public Scan open() {
         ChunkScan s1 = (ChunkScan) p1.open();
+        String scanString1 = String.valueOf(s1);
+        planType1 = (scanString1.split("@")[0]).split("\\.")[2];
         TableScan s2 = (TableScan) p2.open();
+        String scanString2 = String.valueOf(s2);
+        planType2 = (scanString2.split("@")[0]).split("\\.")[2];
 
         return new BlockNestedLoopJoinScan(tx, s1, s2, fldname1, fldname2); //need to change later
     }

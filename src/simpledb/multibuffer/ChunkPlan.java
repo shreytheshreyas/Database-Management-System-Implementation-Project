@@ -22,6 +22,10 @@ public class ChunkPlan implements Plan {
         this.layout = layout;
         sch.addAll(p.schema());
     }
+    
+    public String getPlanType() {
+ 	   return "";
+    }
 
     @Override
     public Scan open() {

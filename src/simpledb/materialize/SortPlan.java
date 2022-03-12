@@ -17,6 +17,7 @@ public class SortPlan implements Plan {
    private LinkedHashMap<String, String> sortFields;
    private RecordComparator comp;
    private boolean isDistinct;
+   private String planType1;
 
    /**
     * Create a sort plan for the specified query.
@@ -40,6 +41,11 @@ public class SortPlan implements Plan {
       this.isDistinct = isDistinct;
    }
    
+   public String getPlanType() {
+	   return planType1;
+   }
+   
+   
    /**
     * This method is where most of the action is.
     * Up to 2 sorted temporary tables are created,
@@ -48,6 +54,8 @@ public class SortPlan implements Plan {
     */
    public Scan open() {
       Scan src = p.open();
+      String scanString1 = String.valueOf(src);
+      planType1 = (scanString1.split("@")[0]).split("\\.")[2];
       List<TempTable> runs = splitIntoRuns(src);
       src.close();
       while (runs.size() > 2)

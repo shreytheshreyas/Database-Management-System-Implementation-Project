@@ -15,6 +15,7 @@ public class MergeJoinPlan implements Plan {
    private Plan p1, p2;
    private String fldname1, fldname2;
    private Schema sch = new Schema();
+   private String planType1, planType2;
    
    /**
     * Creates a mergejoin plan for the two specified queries.
@@ -42,6 +43,12 @@ public class MergeJoinPlan implements Plan {
       sch.addAll(p2.schema());
    }
    
+   
+   public String getPlanType() {
+	   return planType1 + "|"+ planType2;
+   }
+   
+   
    /** The method first sorts its two underlying scans
      * on their join field. It then returns a mergejoin scan
      * of the two sorted table scans.
@@ -49,7 +56,14 @@ public class MergeJoinPlan implements Plan {
      */
    public Scan open() {
       Scan s1 = p1.open();
+//      System.out.println(s1);
+      String scanString1 = String.valueOf(s1);
+      planType1 = (scanString1.split("@")[0]).split("\\.")[2];
+      System.out.println(planType1);
       SortScan s2 = (SortScan) p2.open();
+      String scanString2 = String.valueOf(s2);
+      planType2 = (scanString2.split("@")[0]).split("\\.")[2];
+      System.out.println(planType2);
       return new MergeJoinScan(s1, s2, fldname1, fldname2);
    }
    

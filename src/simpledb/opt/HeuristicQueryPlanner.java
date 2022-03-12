@@ -50,9 +50,9 @@ public class HeuristicQueryPlanner implements QueryPlanner {
       }
       String joinString = String.valueOf(currentplan);
       System.out.println((joinString.split("@")[0]).split("\\.")[2]);
-
       
-
+      String planTypeString = currentplan.getPlanType();
+      System.out.println(planTypeString);
       //Do we project the field names first? then we remove duplicates and orderby?
 //      System.out.println(data.fields());
 //      Plan p = new ProjectPlan(currentplan, data.fields()); //here

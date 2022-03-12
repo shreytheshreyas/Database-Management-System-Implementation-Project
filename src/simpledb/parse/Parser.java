@@ -124,6 +124,11 @@ public class Parser {
             orderFields = orderList();
          }
       }
+      int counter = 0;
+      for (String table : tables) {
+          System.out.println("T" + counter + ": " + table);
+          counter++;
+      };
       return new QueryData(fields, tables, pred, orderFields, isDistinct); //here
    }
    
@@ -160,7 +165,8 @@ public class Parser {
    }
    private Collection<String> tableList() {
       Collection<String> L = new ArrayList<String>();
-      L.add(lex.eatId());
+      String tableName = lex.eatId();
+      L.add(tableName);
       if (lex.matchDelim(',')) {
          lex.eatDelim(',');
          L.addAll(tableList());
