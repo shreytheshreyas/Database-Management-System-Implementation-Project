@@ -107,6 +107,7 @@ public class Parser {
       lex.eatKeyword("select");
       boolean isDistinct = distinct();
       List<String> fields = selectList();
+//      HashMap<String, String> fields = selectList();
       lex.eatKeyword("from");
       Collection<String> tables = tableList(); //Collection of Database relations
       Predicate pred = new Predicate();
@@ -129,14 +130,20 @@ public class Parser {
    }
    
    private List<String> selectList() {
+//   HashMap<String, String> selectList() {
       List<String> L = new ArrayList<String>();
       String attribute = field();
-      String tableName = attribute.split("\\.")[0];
-      String fieldName = attribute.split("\\.")[1];
+      if (attribute.contains("\\.")) {
+    	  String tableName = attribute.split("\\.")[0];
+          String fieldName = attribute.split("\\.")[1];
+          
+          tablesFieldsInput.put(tableName, fieldName);
+      } else {
+    	  // Need to implement as well if some attribute dont have tabledotfield
+          L.add(attribute);
+      }
       
-      tablesFieldsInput.put(tableName, fieldName);
-      
-      L.add(fieldName);
+//      L.add(fieldName);
       if (lex.matchDelim(',')) {
          lex.eatDelim(',');
          L.addAll(selectList());

@@ -89,8 +89,8 @@ class TablePlanner {
       queryJoinPlan = makeSortMergeJoin(current, currsch); //index join - done
       //queryJoinPlan = makeNestedLoopJoin(current, currsch); //This is for the nested loop join plan
 
-      //if (queryJoinPlan == null)
-         //queryJoinPlan = makeProductJoin(current, currsch);
+      if (queryJoinPlan == null)
+         queryJoinPlan = makeProductJoin(current, currsch);
       return queryJoinPlan;
    }
 

@@ -14,6 +14,15 @@ import java.util.*;
 public class Schema {
    private List<String> fields = new ArrayList<>();
    private Map<String,FieldInfo> info = new HashMap<>();
+   private String tableName = "";
+   
+   public void addTableName(String inputTableName) {
+	   tableName = inputTableName; 
+   }
+   
+   public String getTableName() {
+	   return tableName;
+   }
    
    /**
     * Add a field to the schema having a specified

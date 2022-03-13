@@ -48,7 +48,10 @@ public class MergeJoinPlan implements Plan {
      * @see simpledb.plan.Plan#open()
      */
    public Scan open() {
+	   System.out.println("Scan: " + p1.schema().getTableName());
+	   System.out.println("Sort Scan: " + p2.schema().getTableName());
       Scan s1 = p1.open();
+      
       SortScan s2 = (SortScan) p2.open();
       return new MergeJoinScan(s1, s2, fldname1, fldname2);
    }

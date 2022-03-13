@@ -43,6 +43,7 @@ public class MultibufferProductPlan implements Plan {
     */
    public Scan open() {
       Scan leftscan = lhs.open();
+      System.out.println("A RANDOM TEXT");
       TempTable tt = copyRecordsFrom(rhs);
       return new MultibufferProductScan(tx, leftscan, tt.tableName(), tt.getLayout());
    }

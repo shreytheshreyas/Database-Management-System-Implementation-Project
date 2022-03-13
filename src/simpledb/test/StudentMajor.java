@@ -32,8 +32,15 @@ public class StudentMajor {
 //         String myQuery = "SELECT sname, majorid, gradyear FROM STUDENT ORDER BY sname asc, majorid asc, gradyear desc";
 
          
-//         String myQuery = "select sname, prof from student, enroll, section where sid = studentid AND sectionid = sectid";
-         String myQuery = "select student.sname from student where student.sid = 5";
+//         String myQuery = "select sname, prof from student, enroll, section where sid = studentid and sectionid = sectid";
+         String myQuery = "select sname, prof, sectionid from student, enroll, section where sid = studentid AND sectionid = sectid and sectionid = 43";
+//         String myQuery = "select sid from student, enroll, section where sid = studentid and yearoffered = gradyear and sid = 3";
+//         String myQuery = "select sname, prof from student, enroll, section where sectionid = sectid AND sid = studentid";
+//         String myQuery = "select sid from student, enroll, section where sid = studentid and yearoffered = gradyear";
+//         String myQuery = "select student.sname from student where student.sid = 5";
+//         String myQuery = "select sname from student where sid = 5";
+         
+         
          //INNER EQUI JOIN TEST - NEED to add INNER JOIN keyword to the list of keywords
 //         String myQuery = "select distinct did from dept";
 //         String myQuery = "SELECT distinct deptid, did, title, dname FROM dept JOIN course ON did = deptid";
@@ -48,7 +55,7 @@ public class StudentMajor {
          //Creating a query Plan
          Plan myPlan = myPlanner.createQueryPlan(myQuery, myTransaction);
          Scan resultScanner = myPlan.open();
-
+         System.out.println(" ");
          System.out.println("sname"+ "\t\t\t\t");
          while (resultScanner.next()) {
 //            Integer deptid = resultScanner.getInt("deptid");
@@ -56,14 +63,21 @@ public class StudentMajor {
 //            String title = resultScanner.getString("title");
 //        	 String prof = resultScanner.getString("prof");
 //        	 Integer majorid = resultScanner.getInt("majorid");
-             String sname = resultScanner.getString("sname");
 //            String dname = resultScanner.getString("dname");
-
+        	 
+        	 String sname = resultScanner.getString("sname");
+             String prof = resultScanner.getString("prof");
+             Integer sectionid = resultScanner.getInt("sectionid");
+        	 System.out.println(sname + "\t\t\t\t" + prof + "\t\t\t\t" + sectionid);
+        	 
+        	 
 //            Integer sid = resultScanner.getInt("sid");
+//            System.out.println(sid + "\t\t\t\t");
+            
 //            Integer studentid = resultScanner.getInt("studentid");
 //            String name = resultScanner.getString("sname");
 //            String grade = resultScanner.getString("grade");
-        	 System.out.println(sname + "\t\t\t\t");
+        	 
 //            System.out.println(deptid+ "\t\t\t\t"+ did + "\t\t\t\t" + title + "\t\t\t\t" + dname);
 //            System.out.println(deptid);
 //            System.out.println(sid+ "\t\t\t\t"+ studentid + "\t\t\t\t" + name + "\t\t\t\t" + grade);

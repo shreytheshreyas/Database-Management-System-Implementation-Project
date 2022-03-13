@@ -99,6 +99,7 @@ class TableMgr {
             int offset     = fcat.getInt("offset");
             offsets.put(fldname, offset);
             sch.addField(fldname, fldtype, fldlen);
+            sch.addTableName(tblname);
          }
       fcat.close();
       return new Layout(sch, offsets, size);
