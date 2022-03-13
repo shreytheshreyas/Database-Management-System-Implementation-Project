@@ -38,10 +38,12 @@ public class StudentMajor {
 //         String myQuery = "SELECT sid, studentid, SName, Grade FROM enroll JOIN student ON sid = studentid";
 //         String myQuery = "SELECT sid, studentid, SName, Grade FROM enroll JOIN student ON studentid = sid";
          
+         
 //         String myQuery = "SELECT distinct majorid FROM student WHERE gradyear = 2022 or sid = 3";
-//         String myQuery = "SELECT sid FROM student, dept, course WHERE deptid = did";
-         String myQuery = "select distinct sname from student, enroll where sid = studentid order by sname desc";
-//         select distinct sname from student, enroll where sid = studentid order by sname desc
+//         String myQuery = "select distinct sname from student, enroll where sid = studentid order by sname desc";
+         
+         
+         String myQuery = "SELECT sid, sname, eid, cid FROM student, course, enroll WHERE sid = studentid";
          
          //Scanning result set
 
@@ -49,19 +51,21 @@ public class StudentMajor {
          Plan myPlan = myPlanner.createQueryPlan(myQuery, myTransaction);
          Scan resultScanner = myPlan.open();
 //         System.out.println(myPlan);
-         System.out.println("deptid\tdid\ttitle\tdname");
+         System.out.println("sid\tsname\teid\tcid");
          while (resultScanner.next()) {
 //            Integer deptid = resultScanner.getInt("deptid");
 //            Integer did = resultScanner.getInt("did");
 //            String title = resultScanner.getString("title");
 //            String dname = resultScanner.getString("dname");
 
-//            Integer sid = resultScanner.getInt("eid");
+            Integer sid = resultScanner.getInt("sid");
 //            Integer studentid = resultScanner.getInt("studentid");
             String name = resultScanner.getString("sname");
+            Integer eid = resultScanner.getInt("eid");
+            Integer cid = resultScanner.getInt("cid");
 //            String grade = resultScanner.getString("grade");
-//            System.out.println(deptid+ "\t\t\t\t"+ did + "\t\t\t\t" + title + "\t\t\t\t" + dname);
-            System.out.println(name);
+            System.out.println(sid+ "\t\t\t\t"+ name + "\t\t\t\t" + eid + "\t\t\t\t" + cid);
+//            System.out.println(name);
 //            System.out.println(sid+ "\t\t\t\t"+ studentid + "\t\t\t\t" + name + "\t\t\t\t" + grade);
 //            System.out.println(studentName+ "\t\t\t\t" + sid);
 
