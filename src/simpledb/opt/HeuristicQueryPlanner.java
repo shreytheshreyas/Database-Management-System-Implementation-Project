@@ -47,19 +47,30 @@ public class HeuristicQueryPlanner implements QueryPlanner {
             currentplan = getLowestProductPlan(currentplan);
       }
 
+      //The schema which consists of all three fields gets converted to a schema only having one field
+      // currentplan = new ProjectPlan(currentplan, data.fields());
+
       //NEW STEP - checking if the query needs to have a group by plan
 //      if(data.hasGroupByFields()) {
-//         currentplan = new GroupByPlan(currentplan, data.getGroupByFields(), )
+//         currentplan = new GroupByPlan(tx, currentplan, data.getGroupByFields(), data.getAggFunctions());
 //      }
 
       // Step 4: Checking if the query  has order by
-      if(data.hasOrderFields()) {
+      if(data.hasOrderFields() && data.orderFields() != null) {
          currentplan = new SortPlan(tx, currentplan, data.orderFields());
       }
 
       // Step 5.  Project on the field names and return
-      return new ProjectPlan(currentplan, data.fields());
+//      return new ProjectPlan(currentplan, data.fields());
+      //NEW STEP - checking if the query needs to have a group by plan
+      if(data.hasGroupByFields()) {
+         currentplan = new GroupByPlan(tx, currentplan, data.getGroupByFields(), data.getAggFunctions());
+      }
+
+      currentplan = new ProjectPlan(currentplan, data.fields());
+      return currentplan;
    }
+
    
    private Plan getLowestSelectPlan() {
       TablePlanner besttp = null;

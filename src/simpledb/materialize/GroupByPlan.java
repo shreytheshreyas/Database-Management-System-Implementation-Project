@@ -28,7 +28,10 @@ public class GroupByPlan implements Plan {
     * @param tx the calling transaction
     */
    public GroupByPlan(Transaction tx, Plan p, List<String> groupfields, List<AggregationFn> aggfns) {
-      this.p = new SortPlan(tx, p, groupfields);
+      //Converting groupfields List from List to LinkedHashMap so as to successfully execute sortPlan
+      LinkedHashMap<String, String> groupFieldsLhm = convertListToLhm(groupfields);
+//      this.p = new SortPlan(tx, p, groupfields);
+      this.p = new SortPlan(tx, p, groupFieldsLhm);
       this.groupfields = groupfields;
       this.aggfns = aggfns;
       for (String fldname : groupfields)
@@ -36,7 +39,16 @@ public class GroupByPlan implements Plan {
       for (AggregationFn fn : aggfns)
          sch.addIntField(fn.fieldName());
    }
-   
+
+   private LinkedHashMap<String, String> convertListToLhm(List<String> groupfields) {
+      LinkedHashMap<String, String> groupFieldsLinkedHashMap = new LinkedHashMap<>();
+      for(String field : groupfields) {
+         groupFieldsLinkedHashMap.put(field, "asc");
+      }
+
+      return groupFieldsLinkedHashMap;
+   }
+
    /**
     * This method opens a sort plan for the specified plan.
     * The sort plan ensures that the underlying records

@@ -1,7 +1,9 @@
 package simpledb.parse;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
+import simpledb.materialize.*;
 import simpledb.query.*;
 import simpledb.record.*;
 
@@ -125,41 +127,35 @@ public class Parser {
             orderFields = orderList();
          }
       }
-      return new QueryData(fields, tables, pred, orderFields, groupByFields);
+
+      List<AggregationFn> aggregateFunctionFields = lex.getAggregateFunctionFields();
+
+      //Need to modify this return statement to get aggregate function fields
+      return new QueryData(fields, tables, pred, orderFields, groupByFields, aggregateFunctionFields);
    }
    
    private List<String> selectList() {
       List<String> L = new ArrayList<String>();
-      //need to add code to deal with aggregate function
-      if(lex.matchKeyword("count")) {
-         lex.eatKeyword("count");
+
+      if(lex.matchAggregateFunction()) {
+         AggregationFn aggregateFunction = null;
+         String aggregateFunctionStr = lex.eatAggregateFunction();
          lex.eatDelim('(');
-         L.add(field());
+         String fieldName = field();
          lex.eatDelim(')');
-      } else if(lex.matchKeyword("max")) {
-         lex.eatKeyword("max");
-         lex.eatDelim('(');
-         L.add(field());
-         lex.eatDelim(')');
-      } else if(lex.matchKeyword("min")) {
-         lex.eatKeyword("min");
-         lex.eatDelim('(');
-         L.add(field());
-         lex.eatDelim(')');
-      } else if(lex.matchKeyword("sum")) {
-         lex.eatKeyword("sum");
-         lex.eatDelim('(');
-         L.add(field());
-         lex.eatDelim(')');
-      } else if(lex.matchKeyword("avg")) {
-         lex.eatKeyword("avg");
-         lex.eatDelim('(');
-         L.add(field());
-         lex.eatDelim(')');
+
+         switch(aggregateFunctionStr) {
+            case "count": aggregateFunction = new CountFn(fieldName); break;
+            case "max": aggregateFunction = new MaxFn(fieldName); break;
+            case "min": aggregateFunction = new MinFn(fieldName); break;
+            case "sum": aggregateFunction = new SumFn(fieldName); break;
+            case "avg": aggregateFunction = new AvgFn(fieldName); break;
+         }
+
+         lex.addAggregateFunctionField(aggregateFunction);
       } else {
          L.add(field());
       }
-
 
       if (lex.matchDelim(',')) {
          lex.eatDelim(',');
@@ -183,10 +179,6 @@ public class Parser {
          String subOrder = (lex.matchKeyword("asc") || lex.matchKeyword("desc")) ? lex.eatOrderKeyword() : "asc";
          myMap.put(subField, subOrder);
       }
-//      if (lex.matchDelim(',')) {
-//         lex.eatDelim(',');
-//         myMap.putAll(orderList());
-//      }
       return myMap;
    }
 
