@@ -63,10 +63,10 @@ public class QueryPlanOutput {
 	public static void getFinalOutput() {
 //		return combination of everything
 //		System.out.println(selectPlan);
-		System.out.println(selectPred);
-		System.out.println(finalJoinPred);
-		System.out.println(scanPlan);
-		System.out.println(joinPlans);
+//		System.out.println(selectPred);
+//		System.out.println(finalJoinPred);
+//		System.out.println(scanPlan);
+//		System.out.println(joinPlans);
 
 		System.out.print("select (" + selectPred + ") ");
 		int count = 0;
@@ -84,6 +84,7 @@ public class QueryPlanOutput {
 		}
 		
 		System.out.print(output);
+		System.out.println(" ");
 		
 //		for (String joinPred : finalJoinPred) {
 //			System.out.print("select (" + selectPred + ") ");

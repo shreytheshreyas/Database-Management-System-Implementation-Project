@@ -57,10 +57,6 @@ public class HeuristicQueryPlanner implements QueryPlanner {
          else  { // no applicable join
             currentplan = getLowestProductPlan(currentplan);
          }
-         if (count > 1) {
-        	 System.out.print(")x");
-         }
-         count--;
       }
       
       //String joinString = String.valueOf(currentplan);
@@ -104,7 +100,6 @@ public class HeuristicQueryPlanner implements QueryPlanner {
          }
       }
       tableplanners.remove(besttp);
-      System.out.print("((" + tableNames.get(besttp) + "x");
       return bestplan;
    }
    
@@ -120,7 +115,6 @@ public class HeuristicQueryPlanner implements QueryPlanner {
       }
       
       if (bestplan != null)
-    	 System.out.print(tableNames.get(besttp));
          tableplanners.remove(besttp);
       
       return bestplan;

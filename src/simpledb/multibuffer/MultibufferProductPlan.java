@@ -46,7 +46,6 @@ public class MultibufferProductPlan implements Plan {
     */
    public Scan open() {
       Scan leftscan = lhs.open();
-      System.out.println("A RANDOM TEXT");
       TempTable tt = copyRecordsFrom(rhs);
       String joinString1 = String.valueOf(leftscan);
       String joinString2 = String.valueOf("COPYRECORDSFROM");
