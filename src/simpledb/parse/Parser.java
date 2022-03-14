@@ -134,36 +134,74 @@ public class Parser {
       return new QueryData(fields, tables, pred, orderFields, groupByFields, aggregateFunctionFields);
    }
    
+//   private List<String> selectList() {
+//      List<String> L = new ArrayList<String>();
+//
+//      if(lex.matchAggregateFunction()) {
+//         AggregationFn aggregateFunction = null;
+//         String aggregateFunctionStr = lex.eatAggregateFunction();
+//         lex.eatDelim('(');
+//         String fieldName = field();
+//         lex.eatDelim(')');
+//         L.add(fieldName);
+//
+//         switch(aggregateFunctionStr) {
+//            case "count": aggregateFunction = new CountFn(fieldName); break;
+//            case "max": aggregateFunction = new MaxFn(fieldName); break;
+//            case "min": aggregateFunction = new MinFn(fieldName); break;
+//            case "sum": aggregateFunction = new SumFn(fieldName); break;
+//            case "avg": aggregateFunction = new AvgFn(fieldName); break;
+//         }
+//
+//         lex.addAggregateFunctionField(aggregateFunction);
+//      } else {
+//         L.add(field());
+//      }
+//
+//
+//
+//      if (lex.matchDelim(',')) {
+//         lex.eatDelim(',');
+//         L.addAll(selectList());
+//      } else if(lex.matchKeyword("join")) {
+//         lex.eatKeyword("join");
+//         L.addAll(selectList());
+//      }
+//      return L;
+//   }
+
    private List<String> selectList() {
       List<String> L = new ArrayList<String>();
 
-      if(lex.matchAggregateFunction()) {
-         AggregationFn aggregateFunction = null;
-         String aggregateFunctionStr = lex.eatAggregateFunction();
-         lex.eatDelim('(');
-         String fieldName = field();
-         lex.eatDelim(')');
-
-         switch(aggregateFunctionStr) {
-            case "count": aggregateFunction = new CountFn(fieldName); break;
-            case "max": aggregateFunction = new MaxFn(fieldName); break;
-            case "min": aggregateFunction = new MinFn(fieldName); break;
-            case "sum": aggregateFunction = new SumFn(fieldName); break;
-            case "avg": aggregateFunction = new AvgFn(fieldName); break;
+      do {
+         if (lex.matchDelim(',')) {
+            lex.eatDelim(',');
          }
 
-         lex.addAggregateFunctionField(aggregateFunction);
-      } else {
-         L.add(field());
-      }
+         if(lex.matchAggregateFunction()) {
+            AggregationFn aggregateFunction = null;
+            String aggregateFunctionStr = lex.eatAggregateFunction();
+            lex.eatDelim('(');
+            String fieldName = field();
+            lex.eatDelim(')');
+            L.add(fieldName);
 
-      if (lex.matchDelim(',')) {
-         lex.eatDelim(',');
-         L.addAll(selectList());
-      } else if(lex.matchKeyword("join")) {
-         lex.eatKeyword("join");
-         L.addAll(selectList());
-      }
+            switch(aggregateFunctionStr) {
+               case "count": aggregateFunction = new CountFn(fieldName); break;
+               case "max": aggregateFunction = new MaxFn(fieldName); break;
+               case "min": aggregateFunction = new MinFn(fieldName); break;
+               case "sum": aggregateFunction = new SumFn(fieldName); break;
+               case "avg": aggregateFunction = new AvgFn(fieldName); break;
+            }
+
+            lex.addAggregateFunctionField(aggregateFunction);
+         } else {
+            String additionalField = field();
+            L.add(additionalField);
+         }
+
+      } while(lex.matchDelim(','));
+
       return L;
    }
 

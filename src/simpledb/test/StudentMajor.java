@@ -40,7 +40,8 @@ public class StudentMajor {
          //Scanning result set
 
          //GROUP BY QUERY TEST
-         String myQuery = "SELECT deptid, max(cid) FROM COURSE GROUP BY deptid";
+//         String myQuery = "SELECT deptid, max(cid) FROM COURSE GROUP BY deptid";
+         String myQuery = "SELECT count(sid), max(sid), gradyear, min(sid), sum(sid), avg(sid) FROM student GROUP BY gradyear";
          //Creating a query Plan
          //String myQuery = "SELECT sid FROM STUDENT sid > 8";
          Plan myPlan = myPlanner.createQueryPlan(myQuery, myTransaction);
@@ -64,9 +65,14 @@ public class StudentMajor {
 //            System.out.println(studentName+ "\t\t\t\t" + sid);
 
             //Group By fields
-            Integer sid = resultScanner.getInt("deptid");
-            Integer title_count = resultScanner.getInt("maxofcid");
-            System.out.println(sid + "\t" + title_count);
+            Integer sid_count = resultScanner.getInt("countofsid");
+            Integer sid_max = resultScanner.getInt("maxofsid");
+            Integer gradyear = resultScanner.getInt("gradyear");
+            Integer sid_min = resultScanner.getInt("minofsid");
+            Integer sid_sum = resultScanner.getInt("sumofsid");
+            Integer sid_avg = resultScanner.getInt("avgofsid");
+//            System.out.println(sid_count + "\t" + sid_max + "\t" + sid_min + "\t" + sid_sum + "\t" + sid_avg + "\t" + title_count);
+            System.out.println(sid_count + "\t" + sid_max + "\t" + sid_min + "\t" + gradyear + "\t" + sid_sum + "\t" + sid_avg + "\t");
          }
 
          System.out.println("Query was a success");

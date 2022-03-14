@@ -48,12 +48,8 @@ public class HeuristicQueryPlanner implements QueryPlanner {
       }
 
       //The schema which consists of all three fields gets converted to a schema only having one field
-      // currentplan = new ProjectPlan(currentplan, data.fields());
+//       currentplan = new ProjectPlan(currentplan, data.fields());
 
-      //NEW STEP - checking if the query needs to have a group by plan
-//      if(data.hasGroupByFields()) {
-//         currentplan = new GroupByPlan(tx, currentplan, data.getGroupByFields(), data.getAggFunctions());
-//      }
 
       // Step 4: Checking if the query  has order by
       if(data.hasOrderFields() && data.orderFields() != null) {
@@ -67,7 +63,7 @@ public class HeuristicQueryPlanner implements QueryPlanner {
          currentplan = new GroupByPlan(tx, currentplan, data.getGroupByFields(), data.getAggFunctions());
       }
 
-      currentplan = new ProjectPlan(currentplan, data.fields());
+//      currentplan = new ProjectPlan(currentplan, data.fields());
       return currentplan;
    }
 
