@@ -132,14 +132,14 @@ class TablePlanner {
       //get predicate terms
       List<Term> predicateTerms = mypred.getTerms();
 
-      //algorithm
-
+      List<Term> tempTerms = predicateTerms;
+      Term term = tempTerms.get(0);
       //1. Get LHS field of the predicate
-      String lhsField = predicateTerms.get(0).getLhs().asFieldName();
+      String lhsField = term.getLhs().asFieldName();
       //System.out.println(lhsField);
 
       //2. Get RHS field of the predicate
-      String rhsField = predicateTerms.get(0).getRhs().asFieldName();
+      String rhsField = term.getRhs().asFieldName();
       //System.out.println(rhsField);
 
       //3. if both exist in their respective tables we call the MergeJoinPlan
@@ -157,9 +157,20 @@ class TablePlanner {
     * @param current the specified plan
     * @return a product plan of the specified plan and this table
     */
-   public Plan makeProductPlan(Plan current) {
+   public Plan makeProductPlan(Plan current, Schema currsch) {
       Plan p = addSelectPred(myplan);
-      return new MultibufferProductPlan(tx, current, p);
+      List<Term> predicateTerms = mypred.getTerms();
+      List<Term> tempTerms = predicateTerms;
+      Term term = tempTerms.get(1);
+      String lhsField = term.getLhs().asFieldName();
+      String rhsField = term.getRhs().asFieldName();
+      
+      if(myschema.hasField(lhsField) && currsch.hasField(rhsField))
+          return new MultibufferProductPlan(tx, current, p, rhsField, lhsField, isDistinct); //here
+      else if(myschema.hasField(rhsField) && currsch.hasField(lhsField))
+          return new MultibufferProductPlan(tx, current, p, lhsField, rhsField, isDistinct); //here
+//      return new MultibufferProductPlan(tx, current, p);
+      return null;
    }
    
    private Plan makeIndexSelect() {
@@ -189,7 +200,7 @@ class TablePlanner {
    }
    
    private Plan makeProductJoin(Plan current, Schema currsch) {
-      Plan p = makeProductPlan(current);
+      Plan p = makeProductPlan(current, currsch);
       return addJoinPred(p, currsch);
    }
    

@@ -55,6 +55,7 @@ public class StudentMajor {
          //Creating a query Plan
          Plan myPlan = myPlanner.createQueryPlan(myQuery, myTransaction);
          Scan resultScanner = myPlan.open();
+         QueryPlanOutput.getFinalOutput();
          System.out.println(" ");
          System.out.println("sname"+ "\t\t\t\t");
          while (resultScanner.next()) {

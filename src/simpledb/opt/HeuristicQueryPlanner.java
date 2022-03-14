@@ -5,6 +5,7 @@ import simpledb.tx.Transaction;
 import simpledb.metadata.MetadataMgr;
 import simpledb.parse.QueryData;
 import simpledb.plan.*;
+import simpledb.query.QueryPlanOutput;
 import simpledb.materialize.*;
 import simpledb.materialize.DistinctPlan;
 import java.util.HashMap;
@@ -34,7 +35,7 @@ public class HeuristicQueryPlanner implements QueryPlanner {
     * select sname, prof from student, enroll, section where sid = studentid AND sectionid = sectid
     */
    public Plan createPlan(QueryData data, Transaction tx) {
-      
+	  QueryPlanOutput.putGeneralSelectPred(data.pred());
       // Step 1:  Create a TablePlanner object for each mentioned table
       for (String tblname : data.tables()) {
          TablePlanner tp = new TablePlanner(tblname, data.pred(), tx, mdm, data.isDistinct()); //here
@@ -129,7 +130,7 @@ public class HeuristicQueryPlanner implements QueryPlanner {
       TablePlanner besttp = null;
       Plan bestplan = null;
       for (TablePlanner tp : tableplanners) {
-         Plan plan = tp.makeProductPlan(current);
+         Plan plan = tp.makeProductPlan(current, current.schema());
          if (bestplan == null || plan.recordsOutput() < bestplan.recordsOutput()) {
             besttp = tp;
             bestplan = plan;
