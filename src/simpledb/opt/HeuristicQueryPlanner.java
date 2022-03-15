@@ -75,8 +75,17 @@ public class HeuristicQueryPlanner implements QueryPlanner {
       
       
       // Step 5.  Project on the field names and return
-      return new ProjectPlan(currentplan, data.fields()); //here
+
+//      return new ProjectPlan(currentplan, data.fields());
+      //NEW STEP - checking if the query needs to have a group by plan
+      if(data.hasGroupByFields()) {
+         currentplan = new GroupByPlan(tx, currentplan, data.getGroupByFields(), data.getAggFunctions());
+      }
+
+//      currentplan = new ProjectPlan(currentplan, data.fields());
+      return currentplan;
    }
+
    
    private Plan getLowestSelectPlan() {
       TablePlanner besttp = null;

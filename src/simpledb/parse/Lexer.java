@@ -1,5 +1,8 @@
 package simpledb.parse;
 
+import simpledb.materialize.AggregationFn;
+import simpledb.materialize.CountFn;
+
 import java.util.*;
 import java.io.*;
 
@@ -9,6 +12,8 @@ import java.io.*;
  */
 public class Lexer {
    private Collection<String> keywords;
+   private Collection<String> aggregateFunctions;
+   private List<AggregationFn> aggregateFunctionFields;
    private StreamTokenizer tok;
    private Collection<String> newOperators;
    
@@ -19,6 +24,8 @@ public class Lexer {
    public Lexer(String s) {
       initKeywords();
       initNewOperators();
+      initAggregateFunctions();
+      aggregateFunctionFields = new ArrayList<>();
       tok = new StreamTokenizer(new StringReader(s));
       tok.ordinaryChar('.');   //disallow "." in identifiers
       tok.wordChars('_', '_'); //allow "_" in identifiers
@@ -85,7 +92,10 @@ public class Lexer {
 	   nextToken();
 	   return s;
    }
-   
+
+   public boolean matchAggregateFunction() {
+      return  tok.ttype==StreamTokenizer.TT_WORD && aggregateFunctions.contains(tok.sval);
+   }
 //Methods to "eat" the current token
    
    /**
@@ -162,7 +172,23 @@ public class Lexer {
       nextToken();
       return s;
    }
-   
+
+   public String eatAggregateFunction() {
+      String s = tok.sval;
+      if (!matchAggregateFunction())
+         throw new BadSyntaxException();
+      nextToken();
+      return s;
+   }
+
+   public void addAggregateFunctionField(AggregationFn function) {
+      aggregateFunctionFields.add(function);
+   }
+
+   public List<AggregationFn> getAggregateFunctionFields() {
+      return aggregateFunctionFields;
+   }
+
    private void nextToken() {
       try {
          tok.nextToken();
@@ -176,7 +202,12 @@ public class Lexer {
       keywords = Arrays.asList("select", "from", "where", "and",
                                "insert", "into", "values", "delete", "update", "set", 
                                "create", "table", "int", "varchar", "view", "as", "index", "on",
-                               "using", "hash", "btree", "order", "by", "asc", "desc", "inner", "join");
+                               "using", "hash", "btree", "order", "by", "asc", "desc", "inner", "join", "group",
+                               "count", "max", "min", "sum", "avg");
+   }
+
+   private void initAggregateFunctions() {
+      aggregateFunctions = Arrays.asList("max", "min", "count", "sum", "avg");
    }
    
    private void initNewOperators() {

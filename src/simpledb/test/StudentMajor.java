@@ -34,6 +34,7 @@ public class StudentMajor {
 
          //INNER EQUI JOIN TEST - NEED to add INNER JOIN keyword to the list of keywords
 //         String myQuery = "SELECT deptid, did, title, dname FROM dept JOIN course ON deptid = did WHERE did > 20";
+//         String myQuery = "SELECT deptid, did, title, dname FROM dept JOIN course ON did = deptid";
 //         String myQuery = "SELECT sid, studentid, SName, Grade FROM student JOIN enroll ON sid = studentid";
 //         String myQuery = "SELECT sid, studentid, SName, Grade FROM enroll JOIN student ON sid = studentid";
 //         String myQuery = "SELECT sid, studentid, SName, Grade FROM enroll JOIN student ON studentid = sid";
@@ -41,13 +42,17 @@ public class StudentMajor {
          
 //         String myQuery = "SELECT distinct majorid FROM student WHERE gradyear = 2022 or sid = 3";
 //         String myQuery = "select distinct sname from student, enroll where sid = studentid order by sname desc";
-         
+//         String myQuery = "SELECT count(sid), max(sid), gradyear, min(sid), sum(sid), avg(sid) FROM student GROUP BY gradyear";
          
          String myQuery = "SELECT sid, sname, eid, cid FROM student, course, enroll WHERE sid = studentid";
          
          //Scanning result set
 
+         //GROUP BY QUERY TEST
+//         String myQuery = "SELECT deptid, max(cid) FROM COURSE GROUP BY deptid";
+
          //Creating a query Plan
+         //String myQuery = "SELECT sid FROM STUDENT sid > 8";
          Plan myPlan = myPlanner.createQueryPlan(myQuery, myTransaction);
          Scan resultScanner = myPlan.open();
 //         System.out.println(myPlan);
@@ -66,11 +71,19 @@ public class StudentMajor {
 //            String grade = resultScanner.getString("grade");
             System.out.println(sid+ "\t\t\t\t"+ name + "\t\t\t\t" + eid + "\t\t\t\t" + cid);
 //            System.out.println(name);
-//            System.out.println(sid+ "\t\t\t\t"+ studentid + "\t\t\t\t" + name + "\t\t\t\t" + grade);
-//            System.out.println(studentName+ "\t\t\t\t" + sid);
 
+            //Group By fields
+            Integer sid_count = resultScanner.getInt("countofsid");
+            Integer sid_max = resultScanner.getInt("maxofsid");
+            Integer gradyear = resultScanner.getInt("gradyear");
+            Integer sid_min = resultScanner.getInt("minofsid");
+            Integer sid_sum = resultScanner.getInt("sumofsid");
+            Integer sid_avg = resultScanner.getInt("avgofsid");
+//            System.out.println(sid_count + "\t" + sid_max + "\t" + sid_min + "\t" + sid_sum + "\t" + sid_avg + "\t" + title_count);
+            System.out.println(sid_count + "\t" + sid_max + "\t" + sid_min + "\t" + gradyear + "\t" + sid_sum + "\t" + sid_avg + "\t");
          }
 
+         System.out.println("Query was a success");
          resultScanner.close();
          myTransaction.commit();
       }
