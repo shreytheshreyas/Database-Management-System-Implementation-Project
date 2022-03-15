@@ -35,7 +35,7 @@ public class CreateStudentDB {
                "(6, 'kim', 20, 2020)",
                "(7, 'art', 30, 2021)",
                "(8, 'pat', 20, 2019)",
-                 "(9, 'lee', 10, 2023)"
+                 "(9, 'lee', 10, 2021)"
          };
          for (String studentValue : studentValues) {
             myPlanner.executeUpdate(insertDataStatement + studentValue, myTransaction);

@@ -1,7 +1,9 @@
 package simpledb.parse;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
+import simpledb.materialize.*;
 import simpledb.query.*;
 import simpledb.record.*;
 
@@ -95,6 +97,8 @@ public class Parser {
       List<String> fields = selectList();
       lex.eatKeyword("from");
       Collection<String> tables = tableList(); //Collection of Database relations
+
+      //LOGIC FOR WHERE
       Predicate pred = new Predicate();
       if (lex.matchKeyword("where")) {
          lex.eatKeyword("where");
@@ -103,6 +107,18 @@ public class Parser {
          lex.eatKeyword("on");
          pred = predicate();
       }
+
+      //LOGIC FOR GROUP BY
+      ArrayList<String> groupByFields = null;
+      if(lex.matchKeyword("group")) {
+         lex.eatKeyword("group");
+         if(lex.matchKeyword("by")) {
+            lex.eatKeyword("by");
+            groupByFields = groupFieldList();
+         }
+      }
+
+      //LOGIC FOR ORDER BY
       LinkedHashMap<String, String> orderFields = null;
       if(lex.matchKeyword("order")) {
          lex.eatKeyword("order");
@@ -111,19 +127,81 @@ public class Parser {
             orderFields = orderList();
          }
       }
-      return new QueryData(fields, tables, pred, orderFields);
+
+      List<AggregationFn> aggregateFunctionFields = lex.getAggregateFunctionFields();
+
+      //Need to modify this return statement to get aggregate function fields
+      return new QueryData(fields, tables, pred, orderFields, groupByFields, aggregateFunctionFields);
    }
    
+//   private List<String> selectList() {
+//      List<String> L = new ArrayList<String>();
+//
+//      if(lex.matchAggregateFunction()) {
+//         AggregationFn aggregateFunction = null;
+//         String aggregateFunctionStr = lex.eatAggregateFunction();
+//         lex.eatDelim('(');
+//         String fieldName = field();
+//         lex.eatDelim(')');
+//         L.add(fieldName);
+//
+//         switch(aggregateFunctionStr) {
+//            case "count": aggregateFunction = new CountFn(fieldName); break;
+//            case "max": aggregateFunction = new MaxFn(fieldName); break;
+//            case "min": aggregateFunction = new MinFn(fieldName); break;
+//            case "sum": aggregateFunction = new SumFn(fieldName); break;
+//            case "avg": aggregateFunction = new AvgFn(fieldName); break;
+//         }
+//
+//         lex.addAggregateFunctionField(aggregateFunction);
+//      } else {
+//         L.add(field());
+//      }
+//
+//
+//
+//      if (lex.matchDelim(',')) {
+//         lex.eatDelim(',');
+//         L.addAll(selectList());
+//      } else if(lex.matchKeyword("join")) {
+//         lex.eatKeyword("join");
+//         L.addAll(selectList());
+//      }
+//      return L;
+//   }
+
    private List<String> selectList() {
       List<String> L = new ArrayList<String>();
-      L.add(field());
-      if (lex.matchDelim(',')) {
-         lex.eatDelim(',');
-         L.addAll(selectList());
-      } else if(lex.matchKeyword("join")) {
-         lex.eatKeyword("join");
-         L.addAll(selectList());
-      }
+
+      do {
+         if (lex.matchDelim(',')) {
+            lex.eatDelim(',');
+         }
+
+         if(lex.matchAggregateFunction()) {
+            AggregationFn aggregateFunction = null;
+            String aggregateFunctionStr = lex.eatAggregateFunction();
+            lex.eatDelim('(');
+            String fieldName = field();
+            lex.eatDelim(')');
+            L.add(fieldName);
+
+            switch(aggregateFunctionStr) {
+               case "count": aggregateFunction = new CountFn(fieldName); break;
+               case "max": aggregateFunction = new MaxFn(fieldName); break;
+               case "min": aggregateFunction = new MinFn(fieldName); break;
+               case "sum": aggregateFunction = new SumFn(fieldName); break;
+               case "avg": aggregateFunction = new AvgFn(fieldName); break;
+            }
+
+            lex.addAggregateFunctionField(aggregateFunction);
+         } else {
+            String additionalField = field();
+            L.add(additionalField);
+         }
+
+      } while(lex.matchDelim(','));
+
       return L;
    }
 
@@ -139,12 +217,19 @@ public class Parser {
          String subOrder = (lex.matchKeyword("asc") || lex.matchKeyword("desc")) ? lex.eatOrderKeyword() : "asc";
          myMap.put(subField, subOrder);
       }
-//      if (lex.matchDelim(',')) {
-//         lex.eatDelim(',');
-//         myMap.putAll(orderList());
-//      }
       return myMap;
    }
+
+   private ArrayList<String> groupFieldList() {
+      ArrayList<String> myList  = new ArrayList<>();
+      myList.add(field());
+      if(lex.matchDelim(',')) {
+         myList.addAll(groupFieldList());
+      }
+
+      return myList;
+   }
+
    private Collection<String> tableList() {
       Collection<String> L = new ArrayList<String>();
       L.add(lex.eatId());
