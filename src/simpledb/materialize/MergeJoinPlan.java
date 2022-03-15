@@ -55,15 +55,20 @@ public class MergeJoinPlan implements Plan {
      * @see simpledb.plan.Plan#open()
      */
    public Scan open() {
+//	   System.out.println("Scan: " + p1.schema().getTableName());
+//	   System.out.println("Sort Scan: " + p2.schema().getTableName());
       Scan s1 = p1.open();
 //      System.out.println(s1);
       String scanString1 = String.valueOf(s1);
       planType1 = (scanString1.split("@")[0]).split("\\.")[2];
       System.out.println(planType1);
       SortScan s2 = (SortScan) p2.open();
-      String scanString2 = String.valueOf(s2);
-      planType2 = (scanString2.split("@")[0]).split("\\.")[2];
-      System.out.println(planType2);
+      String joinString1 = String.valueOf(s1);
+      String joinString2 = String.valueOf(s2);
+      QueryPlanOutput.putJoinPlan("MergeJoinPlan");
+      QueryPlanOutput.putFinalJoinPred(fldname1, fldname2);
+      QueryPlanOutput.putScanPlan((joinString1.split("@")[0]).split("\\.")[2] + " on " + p1.schema().getTableName(), 
+    		  (joinString2.split("@")[0]).split("\\.")[2] + " on " +  p2.schema().getTableName());
       return new MergeJoinScan(s1, s2, fldname1, fldname2);
    }
    

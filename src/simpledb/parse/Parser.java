@@ -13,6 +13,7 @@ import simpledb.record.*;
  */
 public class Parser {
    private Lexer lex;
+   private HashMap<String, String> tablesFieldsInput = new HashMap<String, String>();
    
    public Parser(String s) {
       lex = new Lexer(s);
@@ -108,6 +109,7 @@ public class Parser {
       lex.eatKeyword("select");
       boolean isDistinct = distinct();
       List<String> fields = selectList();
+//      HashMap<String, String> fields = selectList();
       lex.eatKeyword("from");
       Collection<String> tables = tableList(); //Collection of Database relations
 
@@ -187,6 +189,7 @@ public class Parser {
 //   }
 
    private List<String> selectList() {
+//   HashMap<String, String> selectList() {
       List<String> L = new ArrayList<String>();
 
       do {

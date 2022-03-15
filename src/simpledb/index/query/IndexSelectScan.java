@@ -14,6 +14,7 @@ public class IndexSelectScan implements Scan {
    private TableScan ts;
    private Index idx;
    private Constant val;
+   private Predicate pred;
    
    /**
     * Creates an index select scan for the specified
@@ -21,10 +22,11 @@ public class IndexSelectScan implements Scan {
     * @param idx the index
     * @param val the selection constant
     */
-   public IndexSelectScan(TableScan ts, Index idx, Constant val) {
+   public IndexSelectScan(TableScan ts, Index idx, Constant val, Predicate pred) {
       this.ts  = ts;
       this.idx = idx;
       this.val = val;
+      this.pred = pred;
       beforeFirst();
    }
    
@@ -52,6 +54,11 @@ public class IndexSelectScan implements Scan {
       if (ok) {
          RID rid = idx.getDataRid();
          ts.moveToRid(rid);
+         if (pred.isSatisfied(ts)) {
+        	return true;
+         } else {
+        	return false;
+         }
       }
       return ok;
    }

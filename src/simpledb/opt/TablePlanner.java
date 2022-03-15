@@ -89,8 +89,9 @@ class TablePlanner {
       queryJoinPlan = makeSortMergeJoin(current, currsch); //index join - done
       //queryJoinPlan = makeNestedLoopJoin(current, currsch); //This is for the nested loop join plan
 
-      //if (queryJoinPlan == null)
-//         queryJoinPlan = makeProductJoin(current, currsch);
+      if (queryJoinPlan == null)
+         queryJoinPlan = makeProductJoin(current, currsch);
+
       return queryJoinPlan;
    }
 
@@ -109,6 +110,7 @@ class TablePlanner {
       List<Term> predicateTerms = mypred.getTerms();
       Term tempTerm1 = tempPredicateTerms.remove(0);
       //1. Get LHS field of the predicate
+
       String lhsField = tempTerm1.getLhs().asFieldName();
       System.out.println(lhsField);
 
@@ -158,9 +160,20 @@ class TablePlanner {
     * @param current the specified plan
     * @return a product plan of the specified plan and this table
     */
-   public Plan makeProductPlan(Plan current) {
+   public Plan makeProductPlan(Plan current, Schema currsch) {
       Plan p = addSelectPred(myplan);
-      return new MultibufferProductPlan(tx, current, p);
+      List<Term> predicateTerms = mypred.getTerms();
+      List<Term> tempTerms = predicateTerms;
+      Term term = tempTerms.get(1);
+      String lhsField = term.getLhs().asFieldName();
+      String rhsField = term.getRhs().asFieldName();
+      
+      if(myschema.hasField(lhsField) && currsch.hasField(rhsField))
+          return new MultibufferProductPlan(tx, current, p, rhsField, lhsField, isDistinct); //here
+      else if(myschema.hasField(rhsField) && currsch.hasField(lhsField))
+          return new MultibufferProductPlan(tx, current, p, lhsField, rhsField, isDistinct); //here
+//      return new MultibufferProductPlan(tx, current, p);
+      return null;
    }
    
    private Plan makeIndexSelect() {
@@ -172,10 +185,7 @@ class TablePlanner {
             IndexInfo ii = indexes.get(fldname);
             System.out.println("index on " + fldname + " used");
 //            addQueryComponent("Index Select Plan on" + fldname)
-//            System.out.println("[MakeIndexSelect()] " + myplan);
-//            System.out.println("[MakeIndexSelect()] " + ii);
-//            System.out.println("[MakeIndexSelect()] " + val);
-            return new IndexSelectPlan(myplan, ii, val);
+            return new IndexSelectPlan(myplan, ii, val, mypred);
          }
       }
       return null;
@@ -195,7 +205,7 @@ class TablePlanner {
    }
    
    private Plan makeProductJoin(Plan current, Schema currsch) {
-      Plan p = makeProductPlan(current);
+      Plan p = makeProductPlan(current, currsch);
       return addJoinPred(p, currsch);
    }
    
