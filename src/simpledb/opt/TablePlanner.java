@@ -84,11 +84,7 @@ class TablePlanner {
 
       /*The query optimiser will choose which of the following join plans is ideal
       * for a required query that is provided to the database*/
-
-//      queryJoinPlan = makeIndexJoin(current, currsch); //This is for the sort merge join plan
-//      queryJoinPlan = makeSortMergeJoin(current, currsch); //index join - done
-//      queryJoinPlan = makeNestedLoopJoin(current, currsch); //This is for the nested loop join plan
-
+     
       Plan sortMergeJoinPlan = makeSortMergeJoin(current, currsch);
       Plan indexJoinPlan  = makeIndexJoin(current, currsch);
       Plan nestedLoopJoinPlan = makeNestedLoopJoin(current, currsch);
