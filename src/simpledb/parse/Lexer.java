@@ -15,6 +15,7 @@ public class Lexer {
    private Collection<String> aggregateFunctions;
    private List<AggregationFn> aggregateFunctionFields;
    private StreamTokenizer tok;
+   private Collection<String> newOperators;
    
    /**
     * Creates a new lexical analyzer for SQL statement s.
@@ -22,12 +23,15 @@ public class Lexer {
     */
    public Lexer(String s) {
       initKeywords();
+      initNewOperators();
       initAggregateFunctions();
       aggregateFunctionFields = new ArrayList<>();
       tok = new StreamTokenizer(new StringReader(s));
       tok.ordinaryChar('.');   //disallow "." in identifiers
       tok.wordChars('_', '_'); //allow "_" in identifiers
       tok.lowerCaseMode(true); //ids and keywords are converted
+      tok.wordChars('!', '!');
+      tok.wordChars(60, 62);
       nextToken();
    }
    
@@ -74,6 +78,19 @@ public class Lexer {
     */
    public boolean matchId() {
       return  tok.ttype==StreamTokenizer.TT_WORD && !keywords.contains(tok.sval);
+   }
+   
+   public boolean matchOpr() {
+	   return newOperators.contains(tok.sval);
+   }
+   
+   public String eatOpr() {
+	   if(!matchOpr()) {
+		   throw new BadSyntaxException();
+	   }
+	   String s = tok.sval;
+	   nextToken();
+	   return s;
    }
 
    public boolean matchAggregateFunction() {
@@ -191,5 +208,9 @@ public class Lexer {
 
    private void initAggregateFunctions() {
       aggregateFunctions = Arrays.asList("max", "min", "count", "sum", "avg");
+   }
+   
+   private void initNewOperators() {
+	   newOperators = Arrays.asList("=", "<", "<=", ">", ">=", "!=", "<>");
    }
 }

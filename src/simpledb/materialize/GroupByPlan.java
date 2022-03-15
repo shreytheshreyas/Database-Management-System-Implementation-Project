@@ -15,6 +15,7 @@ public class GroupByPlan implements Plan {
    private List<String> groupfields;
    private List<AggregationFn> aggfns;
    private Schema sch = new Schema();
+   private String planType1;
    
    /**
     * Create a groupby plan for the underlying query.
@@ -31,7 +32,7 @@ public class GroupByPlan implements Plan {
       //Converting groupfields List from List to LinkedHashMap so as to successfully execute sortPlan
       LinkedHashMap<String, String> groupFieldsLhm = convertListToLhm(groupfields);
 //      this.p = new SortPlan(tx, p, groupfields);
-      this.p = new SortPlan(tx, p, groupFieldsLhm);
+      this.p = new SortPlan(tx, p, groupFieldsLhm, false);
       this.groupfields = groupfields;
       this.aggfns = aggfns;
       for (String fldname : groupfields)
@@ -39,6 +40,11 @@ public class GroupByPlan implements Plan {
       for (AggregationFn fn : aggfns)
          sch.addIntField(fn.fieldName());
    }
+   
+   public String getPlanType() {
+	   return planType1;
+   }
+
 
    private LinkedHashMap<String, String> convertListToLhm(List<String> groupfields) {
       LinkedHashMap<String, String> groupFieldsLinkedHashMap = new LinkedHashMap<>();
@@ -57,6 +63,8 @@ public class GroupByPlan implements Plan {
     */
    public Scan open() {
       Scan s = p.open();
+      String scanString1 = String.valueOf(s);
+      planType1 = (scanString1.split("@")[0]).split("\\.")[2];
       return new GroupByScan(s, groupfields, aggfns);
    }
    

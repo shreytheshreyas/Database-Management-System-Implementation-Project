@@ -28,6 +28,7 @@ public class PredParser {
    public void term() {
       expression();
       lex.eatDelim('=');
+      operator();
       expression();
    }
 
@@ -37,6 +38,10 @@ public class PredParser {
          lex.eatKeyword("and");
          predicate();
       }
+   }
+   
+   public String operator() {
+	   return lex.eatOpr();
    }
 }
 

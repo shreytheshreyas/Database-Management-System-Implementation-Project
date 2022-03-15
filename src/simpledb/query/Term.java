@@ -54,7 +54,7 @@ public class Term {
       }
 
       if (relationalOp.equals(">=")) {
-         satisfiedResult = ((lhsval.compareTo(rhsval) > 0) || (lhsval.equals(rhsval)));
+         satisfiedResult = ((lhsval.compareTo(rhsval) >= 0));
       }
 
       if (relationalOp.equals("<")) {
@@ -62,12 +62,16 @@ public class Term {
       }
 
       if (relationalOp.equals("<=")) {
-         satisfiedResult = ((lhsval.compareTo(rhsval) < 0) || (lhsval.equals(rhsval)));
+         satisfiedResult = ((lhsval.compareTo(rhsval) <= 0));
       }
 
       if (relationalOp.equals("!=")) {
          satisfiedResult = !rhsval.equals(lhsval);
       }
+      
+      if (relationalOp.equals("<>")) {
+          satisfiedResult = !rhsval.equals(lhsval);
+       }
 //      return rhsval.equals(lhsval);
       return satisfiedResult;
    }
@@ -225,7 +229,7 @@ public class Term {
    }
    
    public String toString() {
-      return lhs.toString() + "=" + rhs.toString();
+      return lhs.toString() + relationalOp + rhs.toString();
    }
 
    public Expression getLhs() {

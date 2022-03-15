@@ -33,36 +33,44 @@ public class StudentMajor {
 
 
          //INNER EQUI JOIN TEST - NEED to add INNER JOIN keyword to the list of keywords
+//         String myQuery = "SELECT deptid, did, title, dname FROM dept JOIN course ON deptid = did WHERE did > 20";
 //         String myQuery = "SELECT deptid, did, title, dname FROM dept JOIN course ON did = deptid";
 //         String myQuery = "SELECT sid, studentid, SName, Grade FROM student JOIN enroll ON sid = studentid";
 //         String myQuery = "SELECT sid, studentid, SName, Grade FROM enroll JOIN student ON sid = studentid";
 //         String myQuery = "SELECT sid, studentid, SName, Grade FROM enroll JOIN student ON studentid = sid";
+         
+         
+//         String myQuery = "SELECT distinct majorid FROM student WHERE gradyear = 2022 or sid = 3";
+//         String myQuery = "select distinct sname from student, enroll where sid = studentid order by sname desc";
+//         String myQuery = "SELECT count(sid), max(sid), gradyear, min(sid), sum(sid), avg(sid) FROM student GROUP BY gradyear";
+         
+         String myQuery = "SELECT sid, sname, eid, cid FROM student, course, enroll WHERE sid = studentid";
+         
          //Scanning result set
 
          //GROUP BY QUERY TEST
 //         String myQuery = "SELECT deptid, max(cid) FROM COURSE GROUP BY deptid";
-         String myQuery = "SELECT count(sid), max(sid), gradyear, min(sid), sum(sid), avg(sid) FROM student GROUP BY gradyear";
+
          //Creating a query Plan
          //String myQuery = "SELECT sid FROM STUDENT sid > 8";
          Plan myPlan = myPlanner.createQueryPlan(myQuery, myTransaction);
          Scan resultScanner = myPlan.open();
-
-//         System.out.println("deptid\tdid\ttitle\tdname");
-         System.out.println("deptid\tcount(title)");
+//         System.out.println(myPlan);
+         System.out.println("sid\tsname\teid\tcid");
          while (resultScanner.next()) {
 //            Integer deptid = resultScanner.getInt("deptid");
 //            Integer did = resultScanner.getInt("did");
 //            String title = resultScanner.getString("title");
 //            String dname = resultScanner.getString("dname");
 
-//            Integer sid = resultScanner.getInt("sid");
+            Integer sid = resultScanner.getInt("sid");
 //            Integer studentid = resultScanner.getInt("studentid");
-//            String name = resultScanner.getString("sname");
+            String name = resultScanner.getString("sname");
+            Integer eid = resultScanner.getInt("eid");
+            Integer cid = resultScanner.getInt("cid");
 //            String grade = resultScanner.getString("grade");
-//            System.out.println(deptid+ "\t\t\t\t"+ did + "\t\t\t\t" + title + "\t\t\t\t" + dname);
-//            System.out.println(sid);
-//            System.out.println(sid+ "\t\t\t\t"+ studentid + "\t\t\t\t" + name + "\t\t\t\t" + grade);
-//            System.out.println(studentName+ "\t\t\t\t" + sid);
+            System.out.println(sid+ "\t\t\t\t"+ name + "\t\t\t\t" + eid + "\t\t\t\t" + cid);
+//            System.out.println(name);
 
             //Group By fields
             Integer sid_count = resultScanner.getInt("countofsid");

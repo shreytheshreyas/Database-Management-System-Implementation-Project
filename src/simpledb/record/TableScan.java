@@ -53,6 +53,9 @@ public class TableScan implements UpdateScan {
    }
 
    public Constant getVal(String fldname) {
+//	  if (currentslot < 0) {
+//		  return new Constant(0);
+//	  }
       if (layout.schema().type(fldname) == INTEGER)
          return new Constant(getInt(fldname));
       else

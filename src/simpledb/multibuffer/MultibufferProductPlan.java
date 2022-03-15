@@ -29,6 +29,10 @@ public class MultibufferProductPlan implements Plan {
       schema.addAll(lhs.schema());
       schema.addAll(rhs.schema());
    }
+   
+   public String getPlanType() {
+	   return "";
+   }
 
    /**
     * A scan for this query is created and returned, as follows.
