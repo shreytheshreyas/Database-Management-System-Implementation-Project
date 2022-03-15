@@ -44,7 +44,9 @@ public class StudentMajor {
 //         String myQuery = "select distinct sname from student, enroll where sid = studentid order by sname desc";
 //         String myQuery = "SELECT count(sid), max(sid), gradyear, min(sid), sum(sid), avg(sid) FROM student GROUP BY gradyear";
          
-         String myQuery = "SELECT sid, sname, eid, cid FROM student, course, enroll WHERE sid = studentid";
+//         String myQuery = "SELECT sid, sname, eid, cid FROM student, course, enroll WHERE sid = studentid";
+         String myQuery = "select sname, prof, sectionid from student, enroll, section where sid = studentid " +
+                 "AND sectionid = sectid and sectionid = 43";
          
          //Scanning result set
 
@@ -58,29 +60,12 @@ public class StudentMajor {
 //         System.out.println(myPlan);
          System.out.println("sid\tsname\teid\tcid");
          while (resultScanner.next()) {
-//            Integer deptid = resultScanner.getInt("deptid");
-//            Integer did = resultScanner.getInt("did");
-//            String title = resultScanner.getString("title");
-//            String dname = resultScanner.getString("dname");
+            String sname = resultScanner.getString("sname");
+            String prof = resultScanner.getString("prof");
+            Integer sectionid = resultScanner.getInt("sectionid");
 
-            Integer sid = resultScanner.getInt("sid");
-//            Integer studentid = resultScanner.getInt("studentid");
-            String name = resultScanner.getString("sname");
-            Integer eid = resultScanner.getInt("eid");
-            Integer cid = resultScanner.getInt("cid");
-//            String grade = resultScanner.getString("grade");
-            System.out.println(sid+ "\t\t\t\t"+ name + "\t\t\t\t" + eid + "\t\t\t\t" + cid);
-//            System.out.println(name);
 
-            //Group By fields
-            Integer sid_count = resultScanner.getInt("countofsid");
-            Integer sid_max = resultScanner.getInt("maxofsid");
-            Integer gradyear = resultScanner.getInt("gradyear");
-            Integer sid_min = resultScanner.getInt("minofsid");
-            Integer sid_sum = resultScanner.getInt("sumofsid");
-            Integer sid_avg = resultScanner.getInt("avgofsid");
-//            System.out.println(sid_count + "\t" + sid_max + "\t" + sid_min + "\t" + sid_sum + "\t" + sid_avg + "\t" + title_count);
-            System.out.println(sid_count + "\t" + sid_max + "\t" + sid_min + "\t" + gradyear + "\t" + sid_sum + "\t" + sid_avg + "\t");
+            System.out.println(sname + "\t" + prof + "\t" + sectionid);
          }
 
          System.out.println("Query was a success");

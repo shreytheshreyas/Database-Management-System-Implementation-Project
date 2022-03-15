@@ -25,7 +25,7 @@ class TablePlanner {
    private Transaction tx;
    private boolean isDistinct;
    private ArrayList<String> queryPlanComponents = new ArrayList<String>();
-   
+   private List<Term> tempPredicateTerms = new ArrayList<Term>();
    /**
     * Creates a new table planner.
     * The specified predicate applies to the entire query.
@@ -107,13 +107,13 @@ class TablePlanner {
 
       //get predicate terms
       List<Term> predicateTerms = mypred.getTerms();
-
+      Term tempTerm1 = tempPredicateTerms.remove(0);
       //1. Get LHS field of the predicate
-      String lhsField = predicateTerms.get(0).getLhs().asFieldName();
+      String lhsField = tempTerm1.getLhs().asFieldName();
       System.out.println(lhsField);
 
       //2. Get RHS field of the predicate
-      String rhsField = predicateTerms.get(0).getRhs().asFieldName();
+      String rhsField = tempTerm1.getRhs().asFieldName();
       System.out.println(rhsField);
 
       //3. if both exist in their respective tables we call the SimpleNestedJoinPlan
@@ -134,12 +134,13 @@ class TablePlanner {
 
       //algorithm
 
+      Term tempTerm1 = tempPredicateTerms.remove(0);
       //1. Get LHS field of the predicate
-      String lhsField = predicateTerms.get(0).getLhs().asFieldName();
+      String lhsField = tempTerm1.getLhs().asFieldName();
       System.out.println(lhsField);
 
       //2. Get RHS field of the predicate
-      String rhsField = predicateTerms.get(0).getRhs().asFieldName();
+      String rhsField = tempTerm1.getRhs().asFieldName();
       System.out.println(rhsField);
 
       //3. if both exist in their respective tables we call the MergeJoinPlan
