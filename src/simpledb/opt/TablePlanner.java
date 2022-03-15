@@ -100,7 +100,7 @@ class TablePlanner {
       } else if (minimumCost == nestedLoopJoinPlanCost) {
          queryJoinPlan = nestedLoopJoinPlan;
       }
-      
+
       if (queryJoinPlan == null)
          queryJoinPlan = makeProductJoin(current, currsch);
 
