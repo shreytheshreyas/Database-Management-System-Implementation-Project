@@ -68,23 +68,23 @@ public class QueryPlanOutput {
 //		System.out.println(scanPlan);
 //		System.out.println(joinPlans);
 
-		System.out.print("select (" + selectPred + ") ");
-		int count = 0;
-		String output = "";
-		for (String joinPlan : joinPlans) {
-			String firstScan = scanPlan.remove(0);
-			String secondScan = scanPlan.remove(0);
-			String joinPred = finalJoinPred.remove(0);
-			if (count == 0) {
-				output = "[(" + firstScan + ") " + joinPlan + " (" + secondScan + ")]" + "(" + joinPred + ")";
-			} else {
-				output = "[(" + output + ") " + joinPlan + " (" + secondScan + ")]" + "(" + joinPred + ")";
-			}
-			count++;
-		}
-		
-		System.out.print(output);
-		System.out.println(" ");
+//		System.out.print("select (" + selectPred + ") ");
+//		int count = 0;
+//		String output = "";
+//		for (String joinPlan : joinPlans) {
+//			String firstScan = scanPlan.remove(0);
+//			String secondScan = scanPlan.remove(0);
+//			String joinPred = finalJoinPred.remove(0);
+//			if (count == 0) {
+//				output = "[(" + firstScan + ") " + joinPlan + " (" + secondScan + ")]" + "(" + joinPred + ")";
+//			} else {
+//				output = "[(" + output + ") " + joinPlan + " (" + secondScan + ")]" + "(" + joinPred + ")";
+//			}
+//			count++;
+//		}
+//
+//		System.out.print(output);
+//		System.out.println(" ");
 		
 //		for (String joinPred : finalJoinPred) {
 //			System.out.print("select (" + selectPred + ") ");
