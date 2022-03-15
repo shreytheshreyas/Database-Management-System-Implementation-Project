@@ -65,10 +65,6 @@ public class HeuristicQueryPlanner implements QueryPlanner {
       
       String planTypeString = currentplan.getPlanType();
       System.out.println(planTypeString);
-      //Do we project the field names first? then we remove duplicates and orderby?
-//      System.out.println(data.fields());
-//      Plan p = new ProjectPlan(currentplan, data.fields()); //here
-//      
       
       // Step 5: Add a distinct plan if isDistinct is true
       if (data.isDistinct()) {
@@ -84,8 +80,9 @@ public class HeuristicQueryPlanner implements QueryPlanner {
       if(data.hasOrderFields()) {
          currentplan = new SortPlan(tx, currentplan, data.orderFields(), data.isDistinct());
       }
-      
-      
+
+      currentplan = new ProjectPlan(currentplan, data.fields());
+
       // Step 5.  Project on the field names and return
 
 //      return new ProjectPlan(currentplan, data.fields());

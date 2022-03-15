@@ -30,7 +30,7 @@ public class IndexSelectTest {
 		
 		// Two different ways to use the index in simpledb:
 //		useIndexManually(sidIdx, enrollPlan, c);
-		useIndexScan(sidIdx, enrollPlan, c);
+//		useIndexScan(sidIdx, enrollPlan, c);
 		
 		tx.commit();
 	}
@@ -52,14 +52,14 @@ public class IndexSelectTest {
 		s.close();
 	}
 	
-	private static void useIndexScan(IndexInfo ii, Plan p, Constant c) {
-		// Open an index select scan on the enroll table.
-		Plan idxplan = new IndexSelectPlan(p, ii, c);
-		Scan s = idxplan.open();
-		
-		while (s.next()) {
-			System.out.println(s.getString("grade"));
-		}
-		s.close();
-	}
+//	private static void useIndexScan(IndexInfo ii, Plan p, Constant c) {
+//		// Open an index select scan on the enroll table.
+//		Plan idxplan = new IndexSelectPlan(p, ii, c);
+//		Scan s = idxplan.open();
+//
+//		while (s.next()) {
+//			System.out.println(s.getString("grade"));
+//		}
+//		s.close();
+//	}
 }
