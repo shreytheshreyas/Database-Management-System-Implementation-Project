@@ -12,6 +12,7 @@ import simpledb.record.Schema;
 public class SelectPlan implements Plan {
    private Plan p;
    private Predicate pred;
+   private String planType1;
    
    /**
     * Creates a new select node in the query tree,
@@ -24,12 +25,18 @@ public class SelectPlan implements Plan {
       this.pred = pred;
    }
    
+   public String getPlanType() {
+	   return planType1;
+   }
+   
    /**
     * Creates a select scan for this query.
     * @see simpledb.plan.Plan#open()
     */
    public Scan open() {
       Scan s = p.open();
+      String scanString1 = String.valueOf(s);
+      planType1 = (scanString1.split("@")[0]).split("\\.")[2];
       return new SelectScan(s, pred);
    }
    

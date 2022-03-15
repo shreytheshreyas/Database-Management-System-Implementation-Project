@@ -27,6 +27,10 @@ public class TablePlan implements Plan {
       si = md.getStatInfo(tblname, layout, tx);
    }
    
+   public String getPlanType() {
+	   return "";
+   }
+   
    /**
     * Creates a table scan for this query.
     * @see simpledb.plan.Plan#open()

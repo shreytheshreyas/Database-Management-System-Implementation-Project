@@ -13,6 +13,7 @@ import simpledb.record.*;
  */
 public class Parser {
    private Lexer lex;
+   private HashMap<String, String> tablesFieldsInput = new HashMap<String, String>();
    
    public Parser(String s) {
       lex = new Lexer(s);
@@ -38,44 +39,48 @@ public class Parser {
          return new Expression(constant());
    }
    
+   public String opr() {
+	   return lex.eatOpr();
+   }
+   
    public Term term() {
       Expression lhs = expression();
 //      ORIGINAL IMPLEMENTATION
 //      lex.eatDelim('=');
 
 //      MY IMPLEMENTATION
-      String relationalOp = "=";
+      String relationalOp = opr();
 
-      if (lex.matchDelim('=')) {
-         lex.eatDelim('=');
-      } else if (lex.matchDelim('<')) {
-         lex.eatDelim('<');
-         relationalOp = "<";
-         if (lex.matchDelim('=')) {
-            lex.eatDelim('=');
-            relationalOp = "<=";
-         }
-      } else if (lex.matchDelim('>')) {
-         lex.eatDelim('>');
-         relationalOp = ">";
-         if (lex.matchDelim('=')) {
-            lex.eatDelim('=');
-            relationalOp = ">=";
-         }
-      } else if (lex.matchDelim('!')) {
-         lex.eatDelim('!');
-         if (lex.matchDelim('=')) {
-            lex.eatDelim('=');
-            relationalOp = "!=";
-         } else {
-            //THROW EXCEPTION FOR INVALID OPERATION 1
-            System.out.println("The specified operator does not exist");
-            System.exit(0);
-         }
-      } else {
-         System.out.println("The specified operator does not exist");
-         System.exit(0);
-      }
+//      if (lex.matchDelim('=')) {
+//         lex.eatDelim('=');
+//      } else if (lex.matchDelim('<')) {
+//         lex.eatDelim('<');
+//         relationalOp = "<";
+//         if (lex.matchDelim('=')) {
+//            lex.eatDelim('=');
+//            relationalOp = "<=";
+//         }
+//      } else if (lex.matchDelim('>')) {
+//         lex.eatDelim('>');
+//         relationalOp = ">";
+//         if (lex.matchDelim('=')) {
+//            lex.eatDelim('=');
+//            relationalOp = ">=";
+//         }
+//      } else if (lex.matchDelim('!')) {
+//         lex.eatDelim('!');
+//         if (lex.matchDelim('=')) {
+//            lex.eatDelim('=');
+//            relationalOp = "!=";
+//         } else {
+//            //THROW EXCEPTION FOR INVALID OPERATION 1
+//            System.out.println("The specified operator does not exist");
+//            System.exit(0);
+//         }
+//      } else {
+//         System.out.println("The specified operator does not exist");
+//         System.exit(0);
+//      }
 
       Expression rhs = expression();
       return new Term(lhs, rhs, relationalOp);
@@ -92,9 +97,19 @@ public class Parser {
    
 // Methods for parsing queries
    
+   private boolean distinct() { //here
+       if (lex.matchKeyword("distinct")) {
+           lex.eatKeyword("distinct");
+           return true;
+       }
+       return false;
+   }
+   
    public QueryData query() {
       lex.eatKeyword("select");
+      boolean isDistinct = distinct();
       List<String> fields = selectList();
+//      HashMap<String, String> fields = selectList();
       lex.eatKeyword("from");
       Collection<String> tables = tableList(); //Collection of Database relations
 
@@ -127,11 +142,14 @@ public class Parser {
             orderFields = orderList();
          }
       }
+      int counter = 0;
+      for (String table : tables) {
+          System.out.println("T" + counter + ": " + table);
+          counter++;
+      };
 
       List<AggregationFn> aggregateFunctionFields = lex.getAggregateFunctionFields();
-
-      //Need to modify this return statement to get aggregate function fields
-      return new QueryData(fields, tables, pred, orderFields, groupByFields, aggregateFunctionFields);
+      return new QueryData(fields, tables, pred, orderFields, isDistinct, groupByFields, aggregateFunctionFields);
    }
    
 //   private List<String> selectList() {
@@ -171,6 +189,7 @@ public class Parser {
 //   }
 
    private List<String> selectList() {
+//   HashMap<String, String> selectList() {
       List<String> L = new ArrayList<String>();
 
       do {
@@ -232,7 +251,8 @@ public class Parser {
 
    private Collection<String> tableList() {
       Collection<String> L = new ArrayList<String>();
-      L.add(lex.eatId());
+      String tableName = lex.eatId();
+      L.add(tableName);
       if (lex.matchDelim(',')) {
          lex.eatDelim(',');
          L.addAll(tableList());

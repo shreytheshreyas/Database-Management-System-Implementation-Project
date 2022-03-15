@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.Scanner;
 import simpledb.jdbc.embedded.EmbeddedDriver;
 import simpledb.jdbc.network.NetworkDriver;
+import simpledb.query.QueryPlanOutput;
 
 public class SimpleIJ {
    public static void main(String[] args) {
@@ -38,7 +39,7 @@ public class SimpleIJ {
          ResultSetMetaData md = rs.getMetaData();
          int numcols = md.getColumnCount();
          int totalwidth = 0;
-
+         QueryPlanOutput.getFinalOutput();
          // print header
          for(int i=1; i<=numcols; i++) {
             String fldname = md.getColumnName(i);

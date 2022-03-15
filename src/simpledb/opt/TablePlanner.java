@@ -1,6 +1,7 @@
 package simpledb.opt;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 
 import simpledb.materialize.MergeJoinPlan;
@@ -22,7 +23,9 @@ class TablePlanner {
    private Schema myschema;
    private Map<String,IndexInfo> indexes;
    private Transaction tx;
-   
+   private boolean isDistinct;
+   private ArrayList<String> queryPlanComponents = new ArrayList<String>();
+   private List<Term> tempPredicateTerms = new ArrayList<Term>();
    /**
     * Creates a new table planner.
     * The specified predicate applies to the entire query.
@@ -33,12 +36,21 @@ class TablePlanner {
     * @param mypred the query predicate
     * @param tx the calling transaction
     */
-   public TablePlanner(String tblname, Predicate mypred, Transaction tx, MetadataMgr mdm) {
+   public TablePlanner(String tblname, Predicate mypred, Transaction tx, MetadataMgr mdm, boolean isDistinct) {
       this.mypred  = mypred;
       this.tx  = tx;
       myplan   = new TablePlan(tx, tblname, mdm);
       myschema = myplan.schema();
       indexes  = mdm.getIndexInfo(tblname, tx);
+      this.isDistinct = isDistinct;
+   }
+   
+   public void addQueryComponent(String component) {
+	   queryPlanComponents.add(component);
+   }
+   
+   public ArrayList<String> getQueryComponents() {
+	   return queryPlanComponents;
    }
    
    /**
@@ -120,13 +132,14 @@ class TablePlanner {
 
       //get predicate terms
       List<Term> predicateTerms = mypred.getTerms();
-
+      Term tempTerm1 = tempPredicateTerms.remove(0);
       //1. Get LHS field of the predicate
-      String lhsField = predicateTerms.get(0).getLhs().asFieldName();
+
+      String lhsField = tempTerm1.getLhs().asFieldName();
       System.out.println(lhsField);
 
       //2. Get RHS field of the predicate
-      String rhsField = predicateTerms.get(0).getRhs().asFieldName();
+      String rhsField = tempTerm1.getRhs().asFieldName();
       System.out.println(rhsField);
 
       //3. if both exist in their respective tables we call the SimpleNestedJoinPlan
@@ -147,19 +160,20 @@ class TablePlanner {
 
       //algorithm
 
+      Term tempTerm1 = tempPredicateTerms.remove(0);
       //1. Get LHS field of the predicate
-      String lhsField = predicateTerms.get(0).getLhs().asFieldName();
+      String lhsField = tempTerm1.getLhs().asFieldName();
       System.out.println(lhsField);
 
       //2. Get RHS field of the predicate
-      String rhsField = predicateTerms.get(0).getRhs().asFieldName();
+      String rhsField = tempTerm1.getRhs().asFieldName();
       System.out.println(rhsField);
 
       //3. if both exist in their respective tables we call the MergeJoinPlan
       if(myschema.hasField(lhsField) && currsch.hasField(rhsField))
-         return new MergeJoinPlan(tx, current, myplan, rhsField, lhsField);
+         return new MergeJoinPlan(tx, current, myplan, rhsField, lhsField, isDistinct); //here
       else if(myschema.hasField(rhsField) && currsch.hasField(lhsField))
-         return new MergeJoinPlan(tx, current, myplan, lhsField, rhsField);
+         return new MergeJoinPlan(tx, current, myplan, lhsField, rhsField, isDistinct); //here
 
       return null;
    }
@@ -170,18 +184,32 @@ class TablePlanner {
     * @param current the specified plan
     * @return a product plan of the specified plan and this table
     */
-   public Plan makeProductPlan(Plan current) {
+   public Plan makeProductPlan(Plan current, Schema currsch) {
       Plan p = addSelectPred(myplan);
-      return new MultibufferProductPlan(tx, current, p);
+      List<Term> predicateTerms = mypred.getTerms();
+      List<Term> tempTerms = predicateTerms;
+      Term term = tempTerms.get(1);
+      String lhsField = term.getLhs().asFieldName();
+      String rhsField = term.getRhs().asFieldName();
+      
+      if(myschema.hasField(lhsField) && currsch.hasField(rhsField))
+          return new MultibufferProductPlan(tx, current, p, rhsField, lhsField, isDistinct); //here
+      else if(myschema.hasField(rhsField) && currsch.hasField(lhsField))
+          return new MultibufferProductPlan(tx, current, p, lhsField, rhsField, isDistinct); //here
+//      return new MultibufferProductPlan(tx, current, p);
+      return null;
    }
    
    private Plan makeIndexSelect() {
       for (String fldname : indexes.keySet()) {
+//    	  System.out.println("[MakeIndexSelect()] " + fldname);
+//    	  System.out.println("[MakeIndexSelect()] " + mypred);
          Constant val = mypred.equatesWithConstant(fldname);
          if (val != null) {
             IndexInfo ii = indexes.get(fldname);
             System.out.println("index on " + fldname + " used");
-            return new IndexSelectPlan(myplan, ii, val);
+//            addQueryComponent("Index Select Plan on" + fldname)
+            return new IndexSelectPlan(myplan, ii, val, mypred);
          }
       }
       return null;
@@ -201,7 +229,7 @@ class TablePlanner {
    }
    
    private Plan makeProductJoin(Plan current, Schema currsch) {
-      Plan p = makeProductPlan(current);
+      Plan p = makeProductPlan(current, currsch);
       return addJoinPred(p, currsch);
    }
    

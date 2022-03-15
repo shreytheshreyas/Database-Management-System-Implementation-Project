@@ -21,9 +21,14 @@ public class CreateStudentDB {
          System.out.println("Table STUDENT created.");
 
          //Creating Index on Student's realtion on the majorid field.
-         String createIndexStatement = "create index myStudentIndex on student (sid) using btree";
+         String createIndexStatement = "create index myStudentIndex on student (majorid) using btree";
          myPlanner.executeUpdate(createIndexStatement, myTransaction);
          System.out.println("Index for MajorId created on Student table");
+         
+       //Creating Index on Student's realtion on the sid field.
+         createIndexStatement = "create index myStudentIndex on student (sid) using hash";
+         myPlanner.executeUpdate(createIndexStatement, myTransaction);
+         System.out.println("Index for sid created on Student table");
 
          //INSERTING STUDENT DATA
          String insertDataStatement = "insert into STUDENT(sid, sname, majorid, gradyear) values ";
@@ -35,8 +40,16 @@ public class CreateStudentDB {
                "(6, 'kim', 20, 2020)",
                "(7, 'art', 30, 2021)",
                "(8, 'pat', 20, 2019)",
-                 "(9, 'lee', 10, 2021)"
-         };
+                 "(9, 'lee', 10, 2021)"};
+
+//         "insert into ENROLL(eid, studentid, sectionid, grade) values ";
+//         String[] enrollValues = {"(14, 1, 13, 'A')",
+//                                "(24, 1, 43, 'C' )",
+//                                "(34, 2, 43, 'B+')",
+//                                "(44, 4, 33, 'B' )",
+//                                "(54, 4, 53, 'A' )",
+//                                "(64, 6, 53, 'A' )"};
+          
          for (String studentValue : studentValues) {
             myPlanner.executeUpdate(insertDataStatement + studentValue, myTransaction);
          }
@@ -57,6 +70,13 @@ public class CreateStudentDB {
          insertDataStatement = "insert into DEPT(did, dname) values ";
          String[] departmentValues = {"(10, 'compsci')",
                               "(20, 'math')",
+                              "(30, 'drama')",
+                              "(10, 'compsci')",
+                              "(20, 'math')",
+                              "(30, 'drama')",
+                              "(10, 'compsci')",
+                              "(20, 'math')",
+                              "(30, 'drama')",
                               "(30, 'drama')"};
          for (String departmentValue : departmentValues) {
             String command = insertDataStatement + departmentValue;

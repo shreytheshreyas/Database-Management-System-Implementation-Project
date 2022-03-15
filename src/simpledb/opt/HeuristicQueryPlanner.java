@@ -5,7 +5,11 @@ import simpledb.tx.Transaction;
 import simpledb.metadata.MetadataMgr;
 import simpledb.parse.QueryData;
 import simpledb.plan.*;
+import simpledb.query.QueryPlanOutput;
 import simpledb.materialize.*;
+import simpledb.materialize.DistinctPlan;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * A query planner that optimizes using a heuristic-based algorithm.
@@ -14,6 +18,7 @@ import simpledb.materialize.*;
 public class HeuristicQueryPlanner implements QueryPlanner {
    private Collection<TablePlanner> tableplanners = new ArrayList<>();
    private MetadataMgr mdm;
+   HashMap<TablePlanner, String> tableNames = new HashMap<TablePlanner, String>();
    
    public HeuristicQueryPlanner(MetadataMgr mdm) {
       this.mdm = mdm;
@@ -26,37 +31,63 @@ public class HeuristicQueryPlanner implements QueryPlanner {
     * to be first in the join order.
     * H2. Add the table to the join order which
     * results in the smallest output.
+    * 
+    * select sname, prof from student, enroll, section where sid = studentid AND sectionid = sectid
     */
    public Plan createPlan(QueryData data, Transaction tx) {
-      
+	  QueryPlanOutput.putGeneralSelectPred(data.pred());
       // Step 1:  Create a TablePlanner object for each mentioned table
       for (String tblname : data.tables()) {
-         TablePlanner tp = new TablePlanner(tblname, data.pred(), tx, mdm);
+         TablePlanner tp = new TablePlanner(tblname, data.pred(), tx, mdm, data.isDistinct()); //here
+         tableNames.put(tp, tblname);
          tableplanners.add(tp);
       }
       
       // Step 2:  Choose the lowest-size plan to begin the join order
       Plan currentplan = getLowestSelectPlan();
+      //System.out.println("select (" + data.pred().toString() + ")");
       
       // Step 3:  Repeatedly add a plan to the join order
+      //currentplan = (enrollxsection)xstudent
+      Integer count = tableplanners.size();
       while (!tableplanners.isEmpty()) {
          Plan p = getLowestJoinPlan(currentplan);
          if (p != null)
             currentplan = p;
-         else  // no applicable join
+         else  { // no applicable join
             currentplan = getLowestProductPlan(currentplan);
+         }
       }
+      
+      //String joinString = String.valueOf(currentplan);
+      //System.out.println((joinString.split("@")[0]).split("\\.")[2]);
 
-      //The schema which consists of all three fields gets converted to a schema only having one field
-//       currentplan = new ProjectPlan(currentplan, data.fields());
-
-
-      // Step 4: Checking if the query  has order by
-      if(data.hasOrderFields() && data.orderFields() != null) {
-         currentplan = new SortPlan(tx, currentplan, data.orderFields());
+      
+      String planTypeString = currentplan.getPlanType();
+      System.out.println(planTypeString);
+      //Do we project the field names first? then we remove duplicates and orderby?
+//      System.out.println(data.fields());
+//      Plan p = new ProjectPlan(currentplan, data.fields()); //here
+//      
+      
+      // Step 5: Add a distinct plan if isDistinct is true
+      if (data.isDistinct()) {
+    	 LinkedHashMap<String, String> test = new LinkedHashMap<>();
+    	 for (String field : data.fields()) {
+    		 test.put(field, "asc");
+    	}
+         currentplan = new DistinctPlan(tx, currentplan, test); //here
       }
-
+      
+      //
+      // Step 4: Checking if the query has order by
+      if(data.hasOrderFields()) {
+         currentplan = new SortPlan(tx, currentplan, data.orderFields(), data.isDistinct());
+      }
+      
+      
       // Step 5.  Project on the field names and return
+
 //      return new ProjectPlan(currentplan, data.fields());
       //NEW STEP - checking if the query needs to have a group by plan
       if(data.hasGroupByFields()) {
@@ -92,8 +123,10 @@ public class HeuristicQueryPlanner implements QueryPlanner {
             bestplan = plan;
          }
       }
+      
       if (bestplan != null)
          tableplanners.remove(besttp);
+      
       return bestplan;
    }
    
@@ -101,7 +134,7 @@ public class HeuristicQueryPlanner implements QueryPlanner {
       TablePlanner besttp = null;
       Plan bestplan = null;
       for (TablePlanner tp : tableplanners) {
-         Plan plan = tp.makeProductPlan(current);
+         Plan plan = tp.makeProductPlan(current, current.schema());
          if (bestplan == null || plan.recordsOutput() < bestplan.recordsOutput()) {
             besttp = tp;
             bestplan = plan;
