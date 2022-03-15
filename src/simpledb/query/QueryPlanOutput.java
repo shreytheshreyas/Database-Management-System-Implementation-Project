@@ -80,7 +80,7 @@ public class QueryPlanOutput {
 			} else {
 				output = "[(" + output + ") " + joinPlan + " (" + secondScan + ")]" + "(" + joinPred + ")";
 			}
-			count++;		
+			count++;
 		}
 		
 		System.out.print(output);

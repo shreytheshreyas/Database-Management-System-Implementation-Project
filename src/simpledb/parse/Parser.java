@@ -142,12 +142,6 @@ public class Parser {
             orderFields = orderList();
          }
       }
-      int counter = 0;
-      for (String table : tables) {
-          System.out.println("T" + counter + ": " + table);
-          counter++;
-      };
-
       List<AggregationFn> aggregateFunctionFields = lex.getAggregateFunctionFields();
       return new QueryData(fields, tables, pred, orderFields, isDistinct, groupByFields, aggregateFunctionFields);
    }

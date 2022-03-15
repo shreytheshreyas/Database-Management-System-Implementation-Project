@@ -85,9 +85,9 @@ class TablePlanner {
       /*The query optimiser will choose which of the following join plans is ideal
       * for a required query that is provided to the database*/
 
-      //queryJoinPlan = makeSortMergeJoin(current, currsch); //This is for the sort merge join plan
-      queryJoinPlan = makeSortMergeJoin(current, currsch); //index join - done
-      //queryJoinPlan = makeNestedLoopJoin(current, currsch); //This is for the nested loop join plan
+      queryJoinPlan = makeIndexJoin(current, currsch); //This is for the sort merge join plan
+//      queryJoinPlan = makeSortMergeJoin(current, currsch); //index join - done
+//      queryJoinPlan = makeNestedLoopJoin(current, currsch); //This is for the nested loop join plan
 
       if (queryJoinPlan == null)
          queryJoinPlan = makeProductJoin(current, currsch);
@@ -108,22 +108,25 @@ class TablePlanner {
 
       //get predicate terms
       List<Term> predicateTerms = mypred.getTerms();
-      Term tempTerm1 = tempPredicateTerms.remove(0);
-      //1. Get LHS field of the predicate
+//      Term tempTerm1 = tempPredicateTerms.remove(0);
+//      //1. Get LHS field of the predicate
+//
+//      String lhsField = tempTerm1.getLhs().asFieldName();
+//      System.out.println(lhsField);
+//
+//      //2. Get RHS field of the predicate
+//      String rhsField = tempTerm1.getRhs().asFieldName();
+//      System.out.println(rhsField);
 
-      String lhsField = tempTerm1.getLhs().asFieldName();
-      System.out.println(lhsField);
-
-      //2. Get RHS field of the predicate
-      String rhsField = tempTerm1.getRhs().asFieldName();
-      System.out.println(rhsField);
-
-      //3. if both exist in their respective tables we call the SimpleNestedJoinPlan
-      if(myschema.hasField(lhsField) && currsch.hasField(rhsField))
-         return new SimpleNestedLoopJoinPlan(tx, current, myplan, rhsField, lhsField);
-      else if(myschema.hasField(rhsField) && currsch.hasField(lhsField))
-         return new SimpleNestedLoopJoinPlan(tx, current, myplan, lhsField, rhsField);
-
+      for (Term term : predicateTerms) {
+         String lhsField = term.getLhs().asFieldName();
+         String rhsField = term.getRhs().asFieldName();
+         //3. if both exist in their respective tables we call the SimpleNestedJoinPlan
+         if (myschema.hasField(lhsField) && currsch.hasField(rhsField))
+            return new SimpleNestedLoopJoinPlan(tx, current, myplan, rhsField, lhsField);
+         else if (myschema.hasField(rhsField) && currsch.hasField(lhsField))
+            return new SimpleNestedLoopJoinPlan(tx, current, myplan, lhsField, rhsField);
+      }
       return null;
    }
 
@@ -136,21 +139,26 @@ class TablePlanner {
 
       //algorithm
 
-      Term tempTerm1 = tempPredicateTerms.remove(0);
+//      Term tempTerm1 = tempPredicateTerms.remove(0);
       //1. Get LHS field of the predicate
-      String lhsField = tempTerm1.getLhs().asFieldName();
-      System.out.println(lhsField);
+//      String lhsField = predicateTerms.get(0).getLhs().asFieldName();
+//      System.out.println(lhsField);
+//
+//      //2. Get RHS field of the predicate
+//      String rhsField = predicateTerms.get(0).getRhs().asFieldName();
+//      System.out.println(rhsField);
 
-      //2. Get RHS field of the predicate
-      String rhsField = tempTerm1.getRhs().asFieldName();
-      System.out.println(rhsField);
+      for (Term term : predicateTerms) {
+         String lhsField = term.getLhs().asFieldName();
+         String rhsField = term.getRhs().asFieldName();
 
-      //3. if both exist in their respective tables we call the MergeJoinPlan
-      if(myschema.hasField(lhsField) && currsch.hasField(rhsField))
-         return new MergeJoinPlan(tx, current, myplan, rhsField, lhsField, isDistinct); //here
-      else if(myschema.hasField(rhsField) && currsch.hasField(lhsField))
-         return new MergeJoinPlan(tx, current, myplan, lhsField, rhsField, isDistinct); //here
-
+         //3. if both exist in their respective tables we call the MergeJoinPlan
+         // current is the CURRENT PLAN, my plan is the incoming one
+         if (myschema.hasField(lhsField) && currsch.hasField(rhsField))
+            return new MergeJoinPlan(tx, current, myplan, rhsField, lhsField, isDistinct); //here
+         else if (myschema.hasField(rhsField) && currsch.hasField(lhsField))
+            return new MergeJoinPlan(tx, current, myplan, lhsField, rhsField, isDistinct); //here
+      }
       return null;
    }
 
