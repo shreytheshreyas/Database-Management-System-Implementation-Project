@@ -33,7 +33,8 @@ public class StudentMajor {
 
          
 //         String myQuery = "select sname, prof from student, enroll, section where sid = studentid and sectionid = sectid";
-         String myQuery = "select sname, prof, sectionid from student, enroll, section where sid = studentid AND sectionid = sectid and sectionid = 43";
+//         String myQuery = "select sname, prof, sectionid from student, enroll, section where sid = studentid AND sectionid = sectid and sectionid = 43";
+         String myQuery = "SELECT sname, sid FROM STUDENT ORDER BY sid";
 //         String myQuery = "select sid from student, enroll, section where sid = studentid and yearoffered = gradyear and sid = 3";
 //         String myQuery = "select sname, prof from student, enroll, section where sectionid = sectid AND sid = studentid";
 //         String myQuery = "select sid from student, enroll, section where sid = studentid and yearoffered = gradyear";
@@ -66,14 +67,14 @@ public class StudentMajor {
 //        	 Integer majorid = resultScanner.getInt("majorid");
 //            String dname = resultScanner.getString("dname");
         	 
-        	 String sname = resultScanner.getString("sname");
-             String prof = resultScanner.getString("prof");
-             Integer sectionid = resultScanner.getInt("sectionid");
-        	 System.out.println(sname + "\t\t\t\t" + prof + "\t\t\t\t" + sectionid);
+//        	 String sname = resultScanner.getString("sname");
+//             String prof = resultScanner.getString("prof");
+//             Integer sectionid = resultScanner.getInt("sectionid");
+//        	 System.out.println(sname + "\t\t\t\t" + prof + "\t\t\t\t" + sectionid);
         	 
-        	 
-//            Integer sid = resultScanner.getInt("sid");
-//            System.out.println(sid + "\t\t\t\t");
+        	Integer sid = resultScanner.getInt("sid");
+            String sname = resultScanner.getString("sname");
+            System.out.println(sname + "\t\t\t\t" + sid);
             
 //            Integer studentid = resultScanner.getInt("studentid");
 //            String name = resultScanner.getString("sname");
