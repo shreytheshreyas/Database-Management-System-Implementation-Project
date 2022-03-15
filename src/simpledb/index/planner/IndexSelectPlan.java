@@ -16,6 +16,7 @@ public class IndexSelectPlan implements Plan {
    private IndexInfo ii;
    private Constant val;
    private Predicate pred;
+   private String planType1;
    
    /**
     * Creates a new indexselect node in the query tree
@@ -32,6 +33,10 @@ public class IndexSelectPlan implements Plan {
       this.pred = pred;
    }
    
+   public String getPlanType() {
+	   return planType1;
+   }
+   
    /** 
     * Creates a new indexselect scan for this query
     * @see simpledb.plan.Plan#open()
@@ -39,6 +44,8 @@ public class IndexSelectPlan implements Plan {
    public Scan open() {
       // throws an exception if p is not a tableplan.
       TableScan ts = (TableScan) p.open();
+      String scanString1 = String.valueOf(ts);
+      planType1 = (scanString1.split("@")[0]).split("\\.")[2];
       Index idx = ii.open();
       return new IndexSelectScan(ts, idx, val, pred);
    }

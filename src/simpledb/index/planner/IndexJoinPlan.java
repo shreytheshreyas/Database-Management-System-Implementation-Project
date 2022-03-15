@@ -16,6 +16,7 @@ public class IndexJoinPlan implements Plan {
    private IndexInfo ii;
    private String joinfield;
    private Schema sch = new Schema();
+   private String planType1, planType2;
    
    /**
     * Implements the join operator,
@@ -34,14 +35,22 @@ public class IndexJoinPlan implements Plan {
       sch.addAll(p2.schema());
    }
    
+   public String getPlanType() {
+	   return planType1 + "|"+ planType2;
+   }
+   
    /**
     * Opens an indexjoin scan for this query
     * @see simpledb.plan.Plan#open()
     */
    public Scan open() {
       Scan s = p1.open();
+      String scanString1 = String.valueOf(s);
+      planType1 = (scanString1.split("@")[0]).split("\\.")[2];
       // throws an exception if p2 is not a tableplan
       TableScan ts = (TableScan) p2.open();
+      String scanString2 = String.valueOf(ts);
+      planType2 = (scanString2.split("@")[0]).split("\\.")[2];
       Index idx = ii.open();
       return new IndexJoinScan(s, idx, joinfield, ts);
    }

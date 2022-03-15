@@ -19,6 +19,10 @@ public class OptimizedProductPlan implements Plan {
    		bestplan = (b1 < b2) ? prod1 : prod2;   		
    }
 
+   public String getPlanType() {
+	   return "";
+   }
+   
    public Scan open() {
       return bestplan.open();
    }

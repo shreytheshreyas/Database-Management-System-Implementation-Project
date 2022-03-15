@@ -11,6 +11,7 @@ import simpledb.record.Schema;
 public class ProductPlan implements Plan {
    private Plan p1, p2;
    private Schema schema = new Schema();
+   private String planType1, planType2;
    
    /**
     * Creates a new product node in the query tree,
@@ -25,13 +26,19 @@ public class ProductPlan implements Plan {
       schema.addAll(p2.schema());
    }
    
+   public String getPlanType() {
+	   return planType1 + "|"+ planType2;
+   }
+   
    /**
     * Creates a product scan for this query.
     * @see simpledb.plan.Plan#open()
     */
    public Scan open() {
-      Scan s1 = p1.open();
+      Scan s1 = p1.open();    
       Scan s2 = p2.open();
+      String scanString2 = String.valueOf(s2);
+      planType2 = (scanString2.split("@")[0]).split("\\.")[2];
       return new ProductScan(s1, s2);
    }
    

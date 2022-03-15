@@ -16,6 +16,7 @@ public class DistinctPlan implements Plan {
    private Schema sch;
    private LinkedHashMap<String, String> sortFields;
    private RecordComparator comp;
+   private String planType1, planType2;
 
    /**
     * Create a sort plan for the specified query.
@@ -31,6 +32,10 @@ public class DistinctPlan implements Plan {
       comp = new RecordComparator(sortFields);
    }
    
+   public String getPlanType() {
+	   return planType1;
+   }
+   
    /**
     * This method is where most of the action is.
     * Up to 2 sorted temporary tables are created,
@@ -39,9 +44,11 @@ public class DistinctPlan implements Plan {
     */
    public Scan open() {	   
       Scan src = p.open();
+//      String scanString1 = String.valueOf(src);
+//      planType1 = (scanString1.split("@")[0]).split("\\.")[2];
       List<TempTable> runs = splitIntoRuns(src);
       src.close();
-      while (runs.size() > 2)
+      while (runs.size() > 1)
          runs = doAMergeIteration(runs);
       return new DistinctScan(runs);
    }
@@ -136,7 +143,13 @@ public class DistinctPlan implements Plan {
       boolean hasmore1 = src1.next();
       boolean hasmore2 = src2.next();
 
-
+      if (hasmore1 && hasmore2) {
+          if (comp.compare(src1, src2) > 0)
+              hasmore1 = copy(src1, dest);
+          else
+              hasmore2 = copy(src2, dest);
+      }
+      
       while (hasmore1 && hasmore2)  {
          if (comp.compare(src1, src2) > 0)
         	if (isNotDuplicate(src1, dest)) {
@@ -144,7 +157,7 @@ public class DistinctPlan implements Plan {
         	} else {
         		hasmore1 = src1.next();
         	}
-         else if (isNotDuplicate(src1, dest)) {
+         else if (isNotDuplicate(src2, dest)) {
         	 hasmore2 = copy(src2, dest);
          } else {
         	 hasmore2 = src2.next();
@@ -161,7 +174,7 @@ public class DistinctPlan implements Plan {
          }
       else
          while (hasmore2) {
-        	 if (isNotDuplicate(src1, dest)) {
+        	 if (isNotDuplicate(src2, dest)) {
         		 hasmore2 = copy(src2, dest);
              } else {
             	 hasmore2 = src2.next();

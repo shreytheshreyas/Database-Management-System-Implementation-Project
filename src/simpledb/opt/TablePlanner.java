@@ -25,7 +25,7 @@ class TablePlanner {
    private Transaction tx;
    private boolean isDistinct;
    private ArrayList<String> queryPlanComponents = new ArrayList<String>();
-   
+   private List<Term> tempPredicateTerms = new ArrayList<Term>();
    /**
     * Creates a new table planner.
     * The specified predicate applies to the entire query.
@@ -91,6 +91,7 @@ class TablePlanner {
 
       if (queryJoinPlan == null)
          queryJoinPlan = makeProductJoin(current, currsch);
+
       return queryJoinPlan;
    }
 
@@ -107,14 +108,15 @@ class TablePlanner {
 
       //get predicate terms
       List<Term> predicateTerms = mypred.getTerms();
-
+      Term tempTerm1 = tempPredicateTerms.remove(0);
       //1. Get LHS field of the predicate
-      String lhsField = predicateTerms.get(0).getLhs().asFieldName();
-      //System.out.println(lhsField);
+
+      String lhsField = tempTerm1.getLhs().asFieldName();
+      System.out.println(lhsField);
 
       //2. Get RHS field of the predicate
-      String rhsField = predicateTerms.get(0).getRhs().asFieldName();
-      //System.out.println(rhsField);
+      String rhsField = tempTerm1.getRhs().asFieldName();
+      System.out.println(rhsField);
 
       //3. if both exist in their respective tables we call the SimpleNestedJoinPlan
       if(myschema.hasField(lhsField) && currsch.hasField(rhsField))
@@ -132,15 +134,16 @@ class TablePlanner {
       //get predicate terms
       List<Term> predicateTerms = mypred.getTerms();
 
-      List<Term> tempTerms = predicateTerms;
-      Term term = tempTerms.get(0);
+      //algorithm
+
+      Term tempTerm1 = tempPredicateTerms.remove(0);
       //1. Get LHS field of the predicate
-      String lhsField = term.getLhs().asFieldName();
-      //System.out.println(lhsField);
+      String lhsField = tempTerm1.getLhs().asFieldName();
+      System.out.println(lhsField);
 
       //2. Get RHS field of the predicate
-      String rhsField = term.getRhs().asFieldName();
-      //System.out.println(rhsField);
+      String rhsField = tempTerm1.getRhs().asFieldName();
+      System.out.println(rhsField);
 
       //3. if both exist in their respective tables we call the MergeJoinPlan
       if(myschema.hasField(lhsField) && currsch.hasField(rhsField))
@@ -175,6 +178,8 @@ class TablePlanner {
    
    private Plan makeIndexSelect() {
       for (String fldname : indexes.keySet()) {
+//    	  System.out.println("[MakeIndexSelect()] " + fldname);
+//    	  System.out.println("[MakeIndexSelect()] " + mypred);
          Constant val = mypred.equatesWithConstant(fldname);
          if (val != null) {
             IndexInfo ii = indexes.get(fldname);

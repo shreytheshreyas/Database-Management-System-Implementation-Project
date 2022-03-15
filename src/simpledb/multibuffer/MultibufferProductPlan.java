@@ -32,6 +32,10 @@ public class MultibufferProductPlan implements Plan {
       this.fldname1 = fldname1;
       this.fldname2 = fldname2;
    }
+   
+   public String getPlanType() {
+	   return "";
+   }
 
    /**
     * A scan for this query is created and returned, as follows.
