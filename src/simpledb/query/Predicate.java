@@ -113,10 +113,8 @@ public class Predicate {
     */
    public Constant equatesWithConstant(String fldname) {
       for (Term t : terms) {
-    	 System.out.println("[equatesWithConstant()] " + t);
 
          Constant c = t.equatesWithConstant(fldname);
-         System.out.println("[equatesWithConstant()] " + c);
          if (c != null)
             return c;
       }

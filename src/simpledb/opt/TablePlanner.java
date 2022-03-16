@@ -2,6 +2,7 @@ package simpledb.opt;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import simpledb.materialize.MergeJoinPlan;
@@ -59,7 +60,10 @@ class TablePlanner {
     * @return a select plan for the table.
     */
    public Plan makeSelectPlan() {
-      Plan p = makeIndexSelect();
+	   Plan p = null;
+//	   if (mypred.toString() == "") {
+	   p = makeIndexSelect();
+//	   }
       if (p == null)
          p = myplan;
       return addSelectPred(p);
@@ -85,34 +89,45 @@ class TablePlanner {
       /*The query optimiser will choose which of the following join plans is ideal
       * for a required query that is provided to the database*/
      
-      Plan sortMergeJoinPlan = makeSortMergeJoin(current, currsch);
-      Plan indexJoinPlan  = makeIndexJoin(current, currsch);
-      Plan nestedLoopJoinPlan = makeNestedLoopJoin(current, currsch);
-      int sortMergeJoinPlanCost = 0;
-      int indexJoinPlanCost = 0;
-      int nestedLoopJoinPlanCost = 0;
+      Plan sortMergeJoinPlan = makeSortMergeJoin(current, currsch, joinpred);
+      Plan indexJoinPlan  = makeIndexJoin(current, currsch, joinpred);
+      Plan nestedLoopJoinPlan = makeNestedLoopJoin(current, currsch, joinpred);
+      int sortMergeJoinPlanCost = -1;
+      int indexJoinPlanCost = -1;
+      int nestedLoopJoinPlanCost = -1;
       int minimumCost = 0;
+      LinkedHashMap<Plan, Integer> comparisonArray = new LinkedHashMap<Plan, Integer>();
 
-      if (sortMergeJoinPlan != null)
+      if (sortMergeJoinPlan != null) {
          sortMergeJoinPlanCost = sortMergeJoinPlan.blocksAccessed();
-
-      if (indexJoinPlan != null)
-         indexJoinPlanCost = indexJoinPlan.blocksAccessed();
-
-      if (nestedLoopJoinPlan != null)
-         nestedLoopJoinPlanCost = nestedLoopJoinPlan.blocksAccessed();
-
-      minimumCost = Math.min(Math.min(sortMergeJoinPlanCost, indexJoinPlanCost),  nestedLoopJoinPlanCost);
-
-
-      if (minimumCost == sortMergeJoinPlanCost) {
-         queryJoinPlan = sortMergeJoinPlan;
-      } else if (minimumCost == indexJoinPlanCost) {
-         queryJoinPlan = indexJoinPlan;
-      } else if (minimumCost == nestedLoopJoinPlanCost) {
-         queryJoinPlan = nestedLoopJoinPlan;
+         comparisonArray.put(sortMergeJoinPlan, sortMergeJoinPlanCost);
       }
+      	
 
+      if (indexJoinPlan != null) {
+         indexJoinPlanCost = indexJoinPlan.blocksAccessed();
+	     comparisonArray.put(indexJoinPlan, indexJoinPlanCost);
+	   }
+
+      if (nestedLoopJoinPlan != null) {
+         nestedLoopJoinPlanCost = nestedLoopJoinPlan.blocksAccessed();
+         comparisonArray.put(nestedLoopJoinPlan, nestedLoopJoinPlanCost);
+	   }
+      
+      int count = 0;
+      for (Map.Entry mapElement : comparisonArray.entrySet()) {
+    	  Plan plan = (Plan) mapElement.getKey();
+          int cost = (Integer) mapElement.getValue();
+          if (count == 0) {
+        	  minimumCost = cost;
+        	  queryJoinPlan = plan;
+          } else if (cost < minimumCost) {
+        	  minimumCost = cost;
+        	  queryJoinPlan = plan;  
+          }
+          count++;
+      }
+//      queryJoinPlan = indexJoinPlan;
       if (queryJoinPlan == null)
          queryJoinPlan = makeProductJoin(current, currsch);
 
@@ -126,7 +141,7 @@ class TablePlanner {
    * 3. NLJblock*/
 
    //TODO: NEED TO IMPLEMENT FUNCTION DEFINITION
-   private Plan makeNestedLoopJoin(Plan current, Schema currsch) {
+   private Plan makeNestedLoopJoin(Plan current, Schema currsch, Predicate joinpred) {
       boolean joinCondition = false;
       //Query Optimiser will decide which type of NLJ w
 
@@ -147,15 +162,15 @@ class TablePlanner {
          String rhsField = term.getRhs().asFieldName();
          //3. if both exist in their respective tables we call the SimpleNestedJoinPlan
          if (myschema.hasField(lhsField) && currsch.hasField(rhsField))
-            return new SimpleNestedLoopJoinPlan(tx, current, myplan, rhsField, lhsField);
+            return new SimpleNestedLoopJoinPlan(tx, current, myplan, rhsField, lhsField, joinpred);
          else if (myschema.hasField(rhsField) && currsch.hasField(lhsField))
-            return new SimpleNestedLoopJoinPlan(tx, current, myplan, lhsField, rhsField);
+            return new SimpleNestedLoopJoinPlan(tx, current, myplan, lhsField, rhsField, joinpred);
       }
       return null;
    }
 
    //TODO: NEED TO IMPLEMENT FUNCTION DEFINITION
-   private Plan makeSortMergeJoin(Plan current, Schema currsch) {
+   private Plan makeSortMergeJoin(Plan current, Schema currsch, Predicate joinpred) {
       boolean joinCondition = false;
 
       //get predicate terms
@@ -179,9 +194,9 @@ class TablePlanner {
          //3. if both exist in their respective tables we call the MergeJoinPlan
          // current is the CURRENT PLAN, my plan is the incoming one
          if (myschema.hasField(lhsField) && currsch.hasField(rhsField))
-            return new MergeJoinPlan(tx, current, myplan, rhsField, lhsField, isDistinct); //here
+            return new MergeJoinPlan(tx, current, myplan, rhsField, lhsField, isDistinct, joinpred); //here
          else if (myschema.hasField(rhsField) && currsch.hasField(lhsField))
-            return new MergeJoinPlan(tx, current, myplan, lhsField, rhsField, isDistinct); //here
+            return new MergeJoinPlan(tx, current, myplan, lhsField, rhsField, isDistinct, joinpred); //here
       }
       return null;
    }
@@ -194,18 +209,7 @@ class TablePlanner {
     */
    public Plan makeProductPlan(Plan current, Schema currsch) {
       Plan p = addSelectPred(myplan);
-      List<Term> predicateTerms = mypred.getTerms();
-      List<Term> tempTerms = predicateTerms;
-      Term term = tempTerms.get(1);
-      String lhsField = term.getLhs().asFieldName();
-      String rhsField = term.getRhs().asFieldName();
-      
-      if(myschema.hasField(lhsField) && currsch.hasField(rhsField))
-          return new MultibufferProductPlan(tx, current, p, rhsField, lhsField, isDistinct); //here
-      else if(myschema.hasField(rhsField) && currsch.hasField(lhsField))
-          return new MultibufferProductPlan(tx, current, p, lhsField, rhsField, isDistinct); //here
-//      return new MultibufferProductPlan(tx, current, p);
-      return null;
+	  return new MultibufferProductPlan(tx, current, p, isDistinct);
    }
    
    private Plan makeIndexSelect() {
@@ -223,12 +227,12 @@ class TablePlanner {
       return null;
    }
    
-   private Plan makeIndexJoin(Plan current, Schema currsch) {
+   private Plan makeIndexJoin(Plan current, Schema currsch, Predicate joinpred) {
       for (String fldname : indexes.keySet()) {
          String outerfield = mypred.equatesWithField(fldname);
          if (outerfield != null && currsch.hasField(outerfield)) {
             IndexInfo ii = indexes.get(fldname);
-            Plan p = new IndexJoinPlan(current, myplan, ii, outerfield);
+            Plan p = new IndexJoinPlan(current, myplan, ii, outerfield, joinpred);
             p = addSelectPred(p);
             return addJoinPred(p, currsch);
          }

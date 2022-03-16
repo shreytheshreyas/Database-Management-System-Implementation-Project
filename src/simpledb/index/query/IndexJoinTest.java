@@ -25,10 +25,11 @@ public class IndexJoinTest {
 		// Get plans for the Student and Enroll tables
 		Plan studentplan = new TablePlan(tx, "student", mdm);
 		Plan enrollplan = new TablePlan(tx, "enroll", mdm);
+		Predicate joinpred = null;
 
 		// Two different ways to use the index in simpledb:
 		useIndexManually(studentplan, enrollplan, sidIdx, "sid");		
-		useIndexScan(studentplan, enrollplan, sidIdx, "sid");
+		useIndexScan(studentplan, enrollplan, sidIdx, "sid", joinpred);
 
 		tx.commit();
 	}
@@ -56,9 +57,9 @@ public class IndexJoinTest {
 		s2.close();
 	}
 
-	private static void useIndexScan(Plan p1, Plan p2, IndexInfo ii, String joinfield) {
+	private static void useIndexScan(Plan p1, Plan p2, IndexInfo ii, String joinfield, Predicate joinpred) {
 		// Open an index join scan on the table.
-		Plan idxplan = new IndexJoinPlan(p1, p2, ii, joinfield);
+		Plan idxplan = new IndexJoinPlan(p1, p2, ii, joinfield, joinpred);
 		Scan s = idxplan.open();
 
 		while (s.next()) {

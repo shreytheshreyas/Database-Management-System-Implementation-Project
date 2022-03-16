@@ -1,5 +1,7 @@
 package simpledb.plan;
 
+import simpledb.query.Predicate;
+import simpledb.query.QueryPlanOutput;
 import simpledb.query.Scan;
 import simpledb.record.Schema;
 import simpledb.record.TableScan;
@@ -11,6 +13,7 @@ public class SimpleNestedLoopJoinPlan implements Plan {
     private String fldname1, fldname2;
     private Schema sch = new Schema();
     private String planType1, planType2;
+    private Predicate joinpred;
 
 
     /**
@@ -23,7 +26,7 @@ public class SimpleNestedLoopJoinPlan implements Plan {
      * @param fldname2 the RHS join field
      * @param tx the calling transaction
      */
-    public SimpleNestedLoopJoinPlan(Transaction tx, Plan p1, Plan p2, String fldname1, String fldname2) {
+    public SimpleNestedLoopJoinPlan(Transaction tx, Plan p1, Plan p2, String fldname1, String fldname2, Predicate joinpred) {
         this.fldname1 = fldname1;
         this.fldname2 = fldname2;
         this.p1 = p1;
@@ -31,6 +34,7 @@ public class SimpleNestedLoopJoinPlan implements Plan {
         this.tx = tx;
         sch.addAll(p1.schema());
         sch.addAll(p2.schema());
+        this.joinpred = joinpred;
     }
 
     public String getPlanType() {
@@ -49,6 +53,13 @@ public class SimpleNestedLoopJoinPlan implements Plan {
         TableScan s2 = (TableScan) p2.open();
         String scanString2 = String.valueOf(s2);
         planType2 = (scanString2.split("@")[0]).split("\\.")[2];
+        
+        String joinString1 = String.valueOf(s1);
+        String joinString2 = String.valueOf(s2);
+        QueryPlanOutput.putJoinPlan("SimpleNestedLoopJoinPlan");
+        QueryPlanOutput.putFinalJoinPred(joinpred.toString());
+        QueryPlanOutput.putScanPlan((joinString1.split("@")[0]).split("\\.")[2] + " on " + p1.schema().getTableName(), 
+      		  (joinString2.split("@")[0]).split("\\.")[2] + " on " +  p2.schema().getTableName());
         return new SimpleNestedLoopJoinScan(tx, s1, s2, fldname1, fldname2); //need to change later
     }
 
