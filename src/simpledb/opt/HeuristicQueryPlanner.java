@@ -35,11 +35,12 @@ public class HeuristicQueryPlanner implements QueryPlanner {
     * select sname, prof from student, enroll, section where sid = studentid AND sectionid = sectid
     */
    public Plan createPlan(QueryData data, Transaction tx) {
-	  QueryPlanOutput.putGeneralSelectPred(data.pred());
+	  QueryPlanOutput.putAllPred(data.pred());
       // Step 1:  Create a TablePlanner object for each mentioned table
       for (String tblname : data.tables()) {
          TablePlanner tp = new TablePlanner(tblname, data.pred(), tx, mdm, data.isDistinct()); //here
          tableNames.put(tp, tblname);
+         QueryPlanOutput.putTables(tblname);
          tableplanners.add(tp);
       }
       

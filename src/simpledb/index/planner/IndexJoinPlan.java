@@ -15,6 +15,7 @@ public class IndexJoinPlan implements Plan {
    private Plan p1, p2;
    private IndexInfo ii;
    private String joinfield;
+   private Predicate joinpred;
    private Schema sch = new Schema();
    private String planType1, planType2;
    
@@ -26,11 +27,12 @@ public class IndexJoinPlan implements Plan {
     * @param ii information about the right-hand index
     * @param joinfield the left-hand field used for joining
     */
-   public IndexJoinPlan(Plan p1, Plan p2, IndexInfo ii, String joinfield) {
+   public IndexJoinPlan(Plan p1, Plan p2, IndexInfo ii, String joinfield, Predicate joinpred) {
       this.p1 = p1;
       this.p2 = p2;
       this.ii = ii;
       this.joinfield = joinfield;
+      this.joinpred = joinpred;
       sch.addAll(p1.schema());
       sch.addAll(p2.schema());
    }
@@ -52,6 +54,14 @@ public class IndexJoinPlan implements Plan {
       String scanString2 = String.valueOf(ts);
       planType2 = (scanString2.split("@")[0]).split("\\.")[2];
       Index idx = ii.open();
+      
+      String joinString1 = String.valueOf(s);
+      String joinString2 = String.valueOf(ts);
+      System.out.println(joinpred.toString());
+      QueryPlanOutput.putJoinPlan("IndexJoinPlan");
+      QueryPlanOutput.putFinalJoinPred(joinpred.toString());
+      QueryPlanOutput.putScanPlan((joinString1.split("@")[0]).split("\\.")[2] + " on " + p1.schema().getTableName(), 
+    		  (joinString2.split("@")[0]).split("\\.")[2] + " on " +  p2.schema().getTableName());
       return new IndexJoinScan(s, idx, joinfield, ts);
    }
    

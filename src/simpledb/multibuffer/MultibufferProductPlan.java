@@ -15,7 +15,6 @@ public class MultibufferProductPlan implements Plan {
    private Transaction tx;
    private Plan lhs, rhs;
    private Schema schema = new Schema();
-   private String fldname1, fldname2;
 
    /**
     * Creates a product plan for the specified queries.
@@ -23,14 +22,12 @@ public class MultibufferProductPlan implements Plan {
     * @param rhs the plan for the RHS query
     * @param tx the calling transaction
     */
-   public MultibufferProductPlan(Transaction tx, Plan lhs, Plan rhs, String fldname1, String fldname2, boolean isDistinct) {
+   public MultibufferProductPlan(Transaction tx, Plan lhs, Plan rhs, boolean isDistinct) {
       this.tx = tx;
       this.lhs = new MaterializePlan(tx, lhs);
       this.rhs = rhs;
       schema.addAll(lhs.schema());
       schema.addAll(rhs.schema());
-      this.fldname1 = fldname1;
-      this.fldname2 = fldname2;
    }
    
    public String getPlanType() {
@@ -54,7 +51,7 @@ public class MultibufferProductPlan implements Plan {
       String joinString1 = String.valueOf(leftscan);
       String joinString2 = String.valueOf("COPYRECORDSFROM");
       QueryPlanOutput.putJoinPlan("MultibufferProductPlan");
-      QueryPlanOutput.putFinalJoinPred(fldname1, fldname2);
+      QueryPlanOutput.putFinalJoinPred("");
       QueryPlanOutput.putScanPlan((joinString1.split("@")[0]).split("\\.")[2] + " on " + lhs.schema().getTableName(), 
     		  (joinString2 + " on " +  rhs.schema().getTableName()));
       
