@@ -54,11 +54,11 @@ public class IndexSelectScan implements Scan {
       if (ok) {
          RID rid = idx.getDataRid();
          ts.moveToRid(rid);
-         if (pred.isSatisfied(ts)) {
-        	return true;
-         } else {
-        	return false;
-         }
+//         if (pred.isSatisfied(ts)) {
+//        	return true;
+//         } else {
+//        	return false;
+//         }
       }
       return ok;
    }

@@ -70,7 +70,7 @@ public class StudentMajor {
          //String myQuery = "SELECT sid FROM STUDENT sid > 8";
 
          //Alpha Testing Queries
-         String myQuery = "SELECT deptid, did, title, dname FROM dept, course where deptid = did and did > 20";
+         String myQuery = "select sname from student where majorid = 10 and gradyear = 2022";
          Plan myPlan = myPlanner.createQueryPlan(myQuery, myTransaction);
          Scan resultScanner = myPlan.open();
          QueryPlanOutput.getFinalOutput();
@@ -79,14 +79,24 @@ public class StudentMajor {
 //         System.out.println(myPlan);
          System.out.println("sid\tsname\teid\tcid");
          while (resultScanner.next()) {
-//        	 Integer majorid = resultScanner.getInt("majorid");
-            Integer deptid = resultScanner.getInt("deptid");
-            Integer did = resultScanner.getInt("did");
-            String dname = resultScanner.getString("dname");
-            String title = resultScanner.getString("title");
+//        	 Integer deptid = resultScanner.getInt("deptid");
+//            Integer did = resultScanner.getInt("did");
+//            String title = resultScanner.getString("title");
+//            String dname = resultScanner.getString("dname");
+//            System.out.println(deptid + "\t" + did + "\t" + title + "\t" + dname);
+        	 
+//            String title = resultScanner.getString("title");
 //            String prof = resultScanner.getString("prof");
 //            System.out.println(sname + "\t" + prof);
-            System.out.println(deptid + "\t" + did + "\t" + dname + "\t" + title);
+            
+//        	Integer sid = resultScanner.getInt("sid");
+//            String sname = resultScanner.getString("sname");
+//            Integer eid = resultScanner.getInt("eid");
+//            Integer cid = resultScanner.getInt("cid");
+//            System.out.println(sid + "\t" + sname + "\t" + eid + "\t" + cid);
+        	 
+        	 String sname = resultScanner.getString("sname");
+        	 System.out.println(sname);            
          }
 
          System.out.println("Query was a success");
