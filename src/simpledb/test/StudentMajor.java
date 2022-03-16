@@ -66,7 +66,7 @@ public class StudentMajor {
          //String myQuery = "SELECT sid FROM STUDENT sid > 8";
 
          //Alpha Testing Queries
-         String myQuery = "SELECT sname, sid FROM STUDENT ORDER BY sid";
+         String myQuery = "select sname, prof from student, enroll, section";
          Plan myPlan = myPlanner.createQueryPlan(myQuery, myTransaction);
          Scan resultScanner = myPlan.open();
          QueryPlanOutput.getFinalOutput();
@@ -75,9 +75,9 @@ public class StudentMajor {
 //         System.out.println(myPlan);
          System.out.println("sid\tsname\teid\tcid");
          while (resultScanner.next()) {
-            Integer sid = resultScanner.getInt("sid");
             String sname = resultScanner.getString("sname");
-            System.out.println(sname + "\t" + sid);
+            String prof = resultScanner.getString("prof");
+            System.out.println(sname + "\t" + prof);
          }
 
          System.out.println("Query was a success");

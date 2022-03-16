@@ -195,16 +195,21 @@ class TablePlanner {
    public Plan makeProductPlan(Plan current, Schema currsch) {
       Plan p = addSelectPred(myplan);
       List<Term> predicateTerms = mypred.getTerms();
+
+      if(predicateTerms.isEmpty())
+         return new MultibufferProductPlan(tx, current, p, null, null, isDistinct);
+
       List<Term> tempTerms = predicateTerms;
       Term term = tempTerms.get(1);
       String lhsField = term.getLhs().asFieldName();
       String rhsField = term.getRhs().asFieldName();
-      
+
       if(myschema.hasField(lhsField) && currsch.hasField(rhsField))
           return new MultibufferProductPlan(tx, current, p, rhsField, lhsField, isDistinct); //here
       else if(myschema.hasField(rhsField) && currsch.hasField(lhsField))
           return new MultibufferProductPlan(tx, current, p, lhsField, rhsField, isDistinct); //here
-//      return new MultibufferProductPlan(tx, current, p);
+
+
       return null;
    }
    
