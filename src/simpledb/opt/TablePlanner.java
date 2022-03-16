@@ -2,6 +2,7 @@ package simpledb.opt;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import simpledb.materialize.MergeJoinPlan;
@@ -88,31 +89,42 @@ class TablePlanner {
       Plan sortMergeJoinPlan = makeSortMergeJoin(current, currsch);
       Plan indexJoinPlan  = makeIndexJoin(current, currsch);
       Plan nestedLoopJoinPlan = makeNestedLoopJoin(current, currsch);
-      int sortMergeJoinPlanCost = 0;
-      int indexJoinPlanCost = 0;
-      int nestedLoopJoinPlanCost = 0;
+      int sortMergeJoinPlanCost = -1;
+      int indexJoinPlanCost = -1;
+      int nestedLoopJoinPlanCost = -1;
       int minimumCost = 0;
+      LinkedHashMap<Plan, Integer> comparisonArray = new LinkedHashMap<Plan, Integer>();
 
-      if (sortMergeJoinPlan != null)
+      if (sortMergeJoinPlan != null) {
          sortMergeJoinPlanCost = sortMergeJoinPlan.blocksAccessed();
-
-      if (indexJoinPlan != null)
-         indexJoinPlanCost = indexJoinPlan.blocksAccessed();
-
-      if (nestedLoopJoinPlan != null)
-         nestedLoopJoinPlanCost = nestedLoopJoinPlan.blocksAccessed();
-
-      minimumCost = Math.min(Math.min(sortMergeJoinPlanCost, indexJoinPlanCost),  nestedLoopJoinPlanCost);
-
-
-      if (minimumCost == sortMergeJoinPlanCost) {
-         queryJoinPlan = sortMergeJoinPlan;
-      } else if (minimumCost == indexJoinPlanCost) {
-         queryJoinPlan = indexJoinPlan;
-      } else if (minimumCost == nestedLoopJoinPlanCost) {
-         queryJoinPlan = nestedLoopJoinPlan;
+         comparisonArray.put(sortMergeJoinPlan, sortMergeJoinPlanCost);
       }
+      	
 
+      if (indexJoinPlan != null) {
+         indexJoinPlanCost = indexJoinPlan.blocksAccessed();
+	     comparisonArray.put(indexJoinPlan, indexJoinPlanCost);
+	   }
+
+      if (nestedLoopJoinPlan != null) {
+         nestedLoopJoinPlanCost = nestedLoopJoinPlan.blocksAccessed();
+         comparisonArray.put(nestedLoopJoinPlan, nestedLoopJoinPlanCost);
+	   }
+      
+      int count = 0;
+      for (Map.Entry mapElement : comparisonArray.entrySet()) {
+    	  Plan plan = (Plan) mapElement.getKey();
+          int cost = (Integer) mapElement.getValue();
+          if (count == 0) {
+        	  minimumCost = cost;
+        	  queryJoinPlan = plan;
+          } else if (cost < minimumCost) {
+        	  minimumCost = cost;
+        	  queryJoinPlan = plan;  
+          }
+          count++;
+      }
+     
       if (queryJoinPlan == null)
          queryJoinPlan = makeProductJoin(current, currsch);
 
@@ -195,6 +207,9 @@ class TablePlanner {
    public Plan makeProductPlan(Plan current, Schema currsch) {
       Plan p = addSelectPred(myplan);
       List<Term> predicateTerms = mypred.getTerms();
+      if (predicateTerms.isEmpty()) {
+    	  return new MultibufferProductPlan(tx, current, p, null, null, isDistinct);
+      }
       List<Term> tempTerms = predicateTerms;
       Term term = tempTerms.get(1);
       String lhsField = term.getLhs().asFieldName();

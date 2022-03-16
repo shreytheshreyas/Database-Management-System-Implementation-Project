@@ -25,13 +25,13 @@ public class StudentMajor {
 //                 + " WHERE MajorId = DId";
 
          //ORDER BY TEST
-//         String myQuery = "SELECT sname, sid FROM STUDENT ORDER BY sid ";
-//         String myQuery = "SELECT sname, sid FROM STUDENT ORDER BY sname, sid desc";
-//         String myQuery = "SELECT sname, sid FROM STUDENT ORDER BY sname desc, sid asc";
-//         String myQuery = "SELECT sname, sid FROM STUDENT ORDER BY sname desc, sid desc";
-//         String myQuery = "SELECT sname, majorid, gradyear FROM STUDENT ORDER BY sname asc, majorid asc, gradyear desc";
-//         String myQuery = "select sname, prof from student, enroll, section where sid = studentid and sectionid = sectid";
-//         String myQuery = "select sid from student, enroll, section where sid = studentid and yearoffered = gradyear and sid = 3";
+//         String myQuery = "SELECT sname, sid FROM STUDENT ORDER BY sid "; work
+//         String myQuery = "SELECT sname, sid FROM STUDENT ORDER BY sname, sid desc"; work
+//         String myQuery = "SELECT sname, sid FROM STUDENT ORDER BY sname desc, sid asc"; work
+//         String myQuery = "SELECT sname, sid FROM STUDENT ORDER BY sname desc, sid desc"; work
+//         String myQuery = "SELECT sname, majorid, gradyear FROM STUDENT ORDER BY sname asc, majorid asc, gradyear desc"; work
+//         String myQuery = "select sname, prof from student, enroll, section where sid = studentid and sectionid = sectid order by sname"; work
+//         String myQuery = "select sid from student, enroll, section where sid = studentid and yearoffered = gradyear and sid = 3"; not work
 //         String myQuery = "select sname, prof from student, enroll, section where sectionid = sectid AND sid = studentid";
 //         String myQuery = "select sid from student, enroll, section where sid = studentid and yearoffered = gradyear";
 //         String myQuery = "select student.sname from student where student.sid = 5";
@@ -66,7 +66,7 @@ public class StudentMajor {
          //String myQuery = "SELECT sid FROM STUDENT sid > 8";
 
          //Alpha Testing Queries
-         String myQuery = "SELECT sname, sid FROM STUDENT ORDER BY sid";
+         String myQuery = "select sname, prof from student, enroll, section where sectionid = sectid and sid = studentid";
          Plan myPlan = myPlanner.createQueryPlan(myQuery, myTransaction);
          Scan resultScanner = myPlan.open();
          QueryPlanOutput.getFinalOutput();
@@ -75,9 +75,10 @@ public class StudentMajor {
 //         System.out.println(myPlan);
          System.out.println("sid\tsname\teid\tcid");
          while (resultScanner.next()) {
-            Integer sid = resultScanner.getInt("sid");
+//            Integer sid = resultScanner.getInt("sid");
             String sname = resultScanner.getString("sname");
-            System.out.println(sname + "\t" + sid);
+            String prof = resultScanner.getString("prof");
+            System.out.println(sname + "\t" + prof);
          }
 
          System.out.println("Query was a success");
