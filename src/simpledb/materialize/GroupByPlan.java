@@ -34,7 +34,6 @@ public class GroupByPlan implements Plan {
 	  if (groupfields.size() > 0) {
 		  groupFieldsLhm = convertListToLhm(groupfields);
 	  }
-//      this.p = new SortPlan(tx, p, groupfields);
       this.p = new SortPlan(tx, p, groupFieldsLhm, false);
       this.groupfields = groupfields;
       this.aggfns = aggfns;
@@ -42,6 +41,7 @@ public class GroupByPlan implements Plan {
          sch.add(fldname, p.schema());
       for (AggregationFn fn : aggfns)
          sch.addIntField(fn.fieldName());
+
    }
    
    public String getPlanType() {

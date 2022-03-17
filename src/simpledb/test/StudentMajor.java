@@ -70,7 +70,7 @@ public class StudentMajor {
          //String myQuery = "SELECT sid FROM STUDENT sid > 8";
 
          //Alpha Testing Queries
-         String myQuery = "select count(sid), max(sid), gradyear, min(sid), sum(sid), avg(sid) from student";
+         String myQuery = "select deptid, count(title) from course group by deptid";
          Plan myPlan = myPlanner.createQueryPlan(myQuery, myTransaction);
          Scan resultScanner = myPlan.open();
          QueryPlanOutput.getFinalOutput();
@@ -110,7 +110,19 @@ public class StudentMajor {
 //           String title = resultScanner.getString("title");
 //           Integer sid = resultScanner.getInt("sid");
 //           System.out.println(sid + "\t" + sname + "\t" + title);
+
+//            Integer count_of_sid = resultScanner.getInt("countofsid");
+//            Integer max_of_sid = resultScanner.getInt("maxofsid");
+//            Integer min_of_sid = resultScanner.getInt("minofsid");
+//            Integer sum_of_sid = resultScanner.getInt("sumofsid");
+//            Integer avg_of_sid = resultScanner.getInt("avgofsid");
+
+              Integer deptid = resultScanner.getInt("deptid");
+              Integer count_title = resultScanner.getInt("countoftitle");
+//              Integer count_majorid = resultScanner.getInt("countofdeptid");
+            System.out.println(deptid + "\t" + count_title);
          }
+
 
          System.out.println("Query was a success");
          resultScanner.close();

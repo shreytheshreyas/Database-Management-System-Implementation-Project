@@ -130,6 +130,7 @@ public class Parser {
          if(lex.matchKeyword("by")) {
             lex.eatKeyword("by");
             groupByFields = groupFieldList();
+            fields.addAll(groupByFields); //newly added
          }
       }
 
@@ -237,6 +238,7 @@ public class Parser {
       ArrayList<String> myList  = new ArrayList<>();
       myList.add(field());
       if(lex.matchDelim(',')) {
+         lex.eatDelim(',');
          myList.addAll(groupFieldList());
       }
 
