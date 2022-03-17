@@ -93,7 +93,7 @@ class TablePlanner {
       Plan sortMergeJoinPlan = makeSortMergeJoin(current, currsch, joinpred);
       Plan indexJoinPlan  = makeIndexJoin(current, currsch, joinpred);
       Plan nestedLoopJoinPlan = makeNestedLoopJoin(current, currsch, joinpred);
-//      Plan hashJoinPlan = makeHashJoin(current, currsch, joinpred);
+      Plan hashJoinPlan = makeHashJoin(current, currsch, joinpred);
       int sortMergeJoinPlanCost = -1;
       int indexJoinPlanCost = -1;
       int nestedLoopJoinPlanCost = -1;
@@ -138,7 +138,8 @@ class TablePlanner {
 
       if (queryJoinPlan == null)
          queryJoinPlan = makeProductJoin(current, currsch);
-      
+
+      queryJoinPlan = hashJoinPlan;
       return queryJoinPlan;
    }
 

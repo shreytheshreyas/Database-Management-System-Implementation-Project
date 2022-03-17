@@ -68,16 +68,23 @@ public class CreateStudentDB {
 
          //INSERTING DEPARTMENTS DATA
          insertDataStatement = "insert into DEPT(did, dname) values ";
+         //Duplicate fields
+//         String[] departmentValues = {"(10, 'compsci')",
+//                              "(20, 'math')",
+//                              "(30, 'drama')",
+//                              "(10, 'compsci')",
+//                              "(20, 'math')",
+//                              "(30, 'drama')",
+//                              "(10, 'compsci')",
+//                              "(20, 'math')",
+//                              "(30, 'drama')",
+//                              "(30, 'drama')"};
+
          String[] departmentValues = {"(10, 'compsci')",
                               "(20, 'math')",
                               "(30, 'drama')",
-                              "(10, 'compsci')",
-                              "(20, 'math')",
-                              "(30, 'drama')",
-                              "(10, 'compsci')",
-                              "(20, 'math')",
-                              "(30, 'drama')",
-                              "(30, 'drama')"};
+                              "(10, 'compsci')"};
+
          for (String departmentValue : departmentValues) {
             String command = insertDataStatement + departmentValue;
             myPlanner.executeUpdate(command, myTransaction);
@@ -96,12 +103,12 @@ public class CreateStudentDB {
 
          //INSERTING COURSES DATA
          insertDataStatement = "insert into COURSE(cid, title, deptid) values ";
-         String[] courseValues = {"(1, 'db systems', 10)",
-                                "(2, 'compilers', 10)",
-                                "(3, 'calculus', 20)",
-                                "(4, 'algebra', 20)",
-                                "(5, 'acting', 30)",
-                                "(6, 'elocution', 30)"};
+         String[] courseValues = {"(12, 'db systems', 10)",
+                                "(22, 'compilers', 10)",
+                                "(32, 'calculus', 20)",
+                                "(42, 'algebra', 20)",
+                                "(52, 'acting', 30)",
+                                "(62, 'elocution', 30)"};
          for (String courseValue : courseValues) {
             String command = insertDataStatement + courseValue;
             myPlanner.executeUpdate(command, myTransaction);
