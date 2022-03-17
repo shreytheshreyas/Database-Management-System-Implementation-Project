@@ -63,7 +63,7 @@ public class HashPlan implements Plan {
       QueryPlanOutput.putFinalJoinPred(joinpred.toString());
       QueryPlanOutput.putScanPlan((joinString1.split("@")[0]).split("\\.")[2] + " on " + p1.schema().getTableName(), 
     		  (joinString2.split("@")[0]).split("\\.")[2] + " on " +  p2.schema().getTableName());
-      return new HashScan(s1, fldname1, s2, fldname2, noOfPartitions, p1.schema().fields());
+      return new HashScan();
    }
    
    /**
