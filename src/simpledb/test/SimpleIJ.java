@@ -36,10 +36,15 @@ public class SimpleIJ {
 
    private static void doQuery(Statement stmt, String cmd) {
       try (ResultSet rs = stmt.executeQuery(cmd)) {
+         long start = System.nanoTime();
          ResultSetMetaData md = rs.getMetaData();
          int numcols = md.getColumnCount();
          int totalwidth = 0;
+
          QueryPlanOutput.getFinalOutput();
+         long finish = System.nanoTime();
+         long timeElapsed = finish - start;
+         System.out.println("Query took " + timeElapsed + " ns to complete");
          // print header
          for(int i=1; i<=numcols; i++) {
             String fldname = md.getColumnName(i);

@@ -92,8 +92,8 @@ public class HeuristicQueryPlanner implements QueryPlanner {
          currentplan = new GroupByPlan(tx, currentplan, data.getGroupByFields(), data.getAggFunctions());
       }
 
-//      currentplan = new ProjectPlan(currentplan, data.fields());
       currentplan = new ProjectPlan(currentplan, data.fields());
+//      currentplan = new ProjectPlan(currentplan, data.fields());
       return currentplan;
    }
 

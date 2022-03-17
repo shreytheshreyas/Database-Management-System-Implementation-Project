@@ -202,7 +202,7 @@ public class Parser {
             String fieldName = field();
             lex.eatDelim(')');
             L.add("countof" + fieldName);
-
+//            L.add(fieldName);
             switch(aggregateFunctionStr) {
                case "count": aggregateFunction = new CountFn(fieldName); break;
                case "max": aggregateFunction = new MaxFn(fieldName); break;
