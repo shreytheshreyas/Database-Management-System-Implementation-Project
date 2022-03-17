@@ -138,7 +138,7 @@ class TablePlanner {
 //      queryJoinPlan = indexJoinPlan;
       if (queryJoinPlan == null)
          queryJoinPlan = makeProductJoin(current, currsch);
-//      queryJoinPlan = hashJoinPlan;
+      queryJoinPlan = hashJoinPlan;
       return queryJoinPlan;
    }
 

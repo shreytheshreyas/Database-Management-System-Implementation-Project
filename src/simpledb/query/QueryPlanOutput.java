@@ -9,7 +9,6 @@ public class QueryPlanOutput {
 	public static ArrayList<String> tables = new ArrayList<String>();
 	public static List<String> allPredTerms = new ArrayList<String>();
 	public static ArrayList<String> selectPred = new ArrayList<String>();
-	public static ArrayList<String> joinPred = new ArrayList<String>();
 	public static ArrayList<String> finalJoinPred = new ArrayList<String>();
 	public static ArrayList<String> scanPlan = new ArrayList<String>();
 	public static ArrayList<String> joinPlans = new ArrayList<String>();
@@ -125,6 +124,16 @@ public class QueryPlanOutput {
 			System.out.print(output);
 			System.out.println(" ");
 		}
+		
+		finalOutput = "";
+		selectPlan = "";
+		tables = new ArrayList<String>();
+		allPredTerms = new ArrayList<String>();
+		selectPred = new ArrayList<String>();
+		finalJoinPred = new ArrayList<String>();
+		scanPlan = new ArrayList<String>();
+		joinPlans = new ArrayList<String>();
+		
 		
 	}
 }

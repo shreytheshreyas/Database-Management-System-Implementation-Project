@@ -81,14 +81,14 @@ public class QueryData {
    }
 
    public boolean hasGroupByFields() {
-      if(groupByFields != null)
+      if(groupByFields.size() > 0)
          return true;
       else
          return false;
    }
    
    public boolean hasAggFields() {
-      if(aggFunctions != null)
+      if(aggFunctions.size() > 0)
          return true;
       else
          return false;
