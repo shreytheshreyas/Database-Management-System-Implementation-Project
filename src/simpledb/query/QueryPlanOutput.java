@@ -10,12 +10,14 @@ public class QueryPlanOutput {
 	public static String selectPlan = "";
 	public static ArrayList<String> tables = new ArrayList<String>();
 	public static List<String> allPredTerms = new ArrayList<String>();
+	public static List<String> allFields = new ArrayList<String>();
+	
 	public static ArrayList<String> selectPred = new ArrayList<String>();
 	public static ArrayList<String> finalJoinPred = new ArrayList<String>();
 	public static ArrayList<String> scanPlan = new ArrayList<String>();
 	public static ArrayList<String> joinPlans = new ArrayList<String>();
 	
-	public static String aggFns = "";
+	public static List<String> aggFns = new ArrayList<String>();
 	public static String groupBy = "";
 	public static Boolean isDistinct = false;
 	
@@ -43,15 +45,21 @@ public class QueryPlanOutput {
 		}
 	}
 	
+	public static void putAllFields(List<String> fields) {
+//		List<Term> temp = fields.getTerms();
+		allFields = fields;
+	}
+
 	public static void putFinalJoinPred(String pred) {
 		finalJoinPred.add(pred);
 	}
 	
 	public static void putAggTerms(List<AggregationFn> aggfns) {
-		List<String> temp = new ArrayList<String>();
+//		aggFns = aggfns;
+//		List<String> temp = new ArrayList<String>();
 		for (AggregationFn fn : aggfns)
-			temp.add(fn.fieldName());
-		aggFns = String.join(", ", temp);
+			aggFns.add(fn.fieldName());
+//		aggFns = String.join(", ", temp);
 //		System.out.println(aggFns);
 	}
 	
@@ -78,11 +86,14 @@ public class QueryPlanOutput {
 				allPredTerms.remove(pred);
 			}
 		}
+		
+		allPredTerms.addAll(allFields);
+		allPredTerms.addAll(aggFns);
 		String finalSelectPred = String.join(", ", allPredTerms);
 		if (isDistinct) {
-			System.out.print("select distinct (" + finalSelectPred + aggFns + ") ");
+			System.out.print("select distinct (" + finalSelectPred + ") ");
 		} else {
-			System.out.print("select (" + finalSelectPred + aggFns + ") ");
+			System.out.print("select (" + finalSelectPred + ") ");
 		}
 		
 		
@@ -130,7 +141,8 @@ public class QueryPlanOutput {
 		}
 		
 		finalSelectPred = "";
-		aggFns = "";
+		aggFns = new ArrayList<String>();
+		allFields = new ArrayList<String>();
 		finalOutput = "";
 		selectPlan = "";
 		tables = new ArrayList<String>();
@@ -140,7 +152,7 @@ public class QueryPlanOutput {
 		scanPlan = new ArrayList<String>();
 		joinPlans = new ArrayList<String>();
 		groupBy = "";
-		
+		isDistinct = false;
 		
 	}
 }
