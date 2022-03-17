@@ -15,8 +15,8 @@ public class QueryData {
    private Predicate pred;
    private LinkedHashMap<String, String> orderFields = new LinkedHashMap<>();
    private boolean isDistinct;
-   private List<String> groupByFields;
-   private List<AggregationFn> aggFunctions;
+   private List<String> groupByFields = Collections.<String>emptyList();
+   private List<AggregationFn> aggFunctions = Collections.<AggregationFn>emptyList();
    /**
     * Saves the field and table list and predicate.
     */
@@ -81,8 +81,15 @@ public class QueryData {
    }
 
    public boolean hasGroupByFields() {
-      if(groupByFields != null)
-         return !groupByFields.isEmpty();
+      if(groupByFields.size() > 0)
+         return true;
+      else
+         return false;
+   }
+   
+   public boolean hasAggFields() {
+      if(aggFunctions.size() > 0)
+         return true;
       else
          return false;
    }
@@ -92,7 +99,8 @@ public class QueryData {
    }
 
    public List<String> getGroupByFields() {
-      return groupByFields;
+	   return groupByFields;
+	   
    }
 
    public List<AggregationFn> getAggFunctions() {
