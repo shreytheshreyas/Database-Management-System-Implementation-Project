@@ -130,7 +130,10 @@ public class Parser {
          if(lex.matchKeyword("by")) {
             lex.eatKeyword("by");
             groupByFields = groupFieldList();
-            fields.addAll(groupByFields); //newly added
+            fields.addAll(groupByFields); //original implementation
+//            for(String groupfield : groupByFields) {
+//               fields.add("countof" + groupfield);
+//            }
          }
       }
 
