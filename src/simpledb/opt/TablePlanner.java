@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import simpledb.materialize.HashPlan;
 import simpledb.materialize.MergeJoinPlan;
 import simpledb.tx.Transaction;
 import simpledb.record.*;
@@ -92,9 +93,11 @@ class TablePlanner {
       Plan sortMergeJoinPlan = makeSortMergeJoin(current, currsch, joinpred);
       Plan indexJoinPlan  = makeIndexJoin(current, currsch, joinpred);
       Plan nestedLoopJoinPlan = makeNestedLoopJoin(current, currsch, joinpred);
+      Plan hashJoinPlan = makeHashJoin(current, currsch, joinpred);
       int sortMergeJoinPlanCost = -1;
       int indexJoinPlanCost = -1;
       int nestedLoopJoinPlanCost = -1;
+      int hashJoinPlanCost = -1;
       int minimumCost = 0;
       LinkedHashMap<Plan, Integer> comparisonArray = new LinkedHashMap<Plan, Integer>();
 
@@ -114,6 +117,11 @@ class TablePlanner {
          comparisonArray.put(nestedLoopJoinPlan, nestedLoopJoinPlanCost);
 	   }
       
+      if (hashJoinPlan != null) {
+    	  hashJoinPlanCost = hashJoinPlan.blocksAccessed();
+          comparisonArray.put(hashJoinPlan, hashJoinPlanCost);
+ 	   }
+      
       int count = 0;
       for (Map.Entry mapElement : comparisonArray.entrySet()) {
     	  Plan plan = (Plan) mapElement.getKey();
@@ -130,7 +138,7 @@ class TablePlanner {
 //      queryJoinPlan = indexJoinPlan;
       if (queryJoinPlan == null)
          queryJoinPlan = makeProductJoin(current, currsch);
-
+//      queryJoinPlan = hashJoinPlan;
       return queryJoinPlan;
    }
 
@@ -147,24 +155,20 @@ class TablePlanner {
 
       //get predicate terms
       List<Term> predicateTerms = mypred.getTerms();
-//      Term tempTerm1 = tempPredicateTerms.remove(0);
-//      //1. Get LHS field of the predicate
-//
-//      String lhsField = tempTerm1.getLhs().asFieldName();
-//      System.out.println(lhsField);
-//
-//      //2. Get RHS field of the predicate
-//      String rhsField = tempTerm1.getRhs().asFieldName();
-//      System.out.println(rhsField);
-
       for (Term term : predicateTerms) {
          String lhsField = term.getLhs().asFieldName();
          String rhsField = term.getRhs().asFieldName();
          //3. if both exist in their respective tables we call the SimpleNestedJoinPlan
-         if (myschema.hasField(lhsField) && currsch.hasField(rhsField))
-            return new SimpleNestedLoopJoinPlan(tx, current, myplan, rhsField, lhsField, joinpred);
-         else if (myschema.hasField(rhsField) && currsch.hasField(lhsField))
-            return new SimpleNestedLoopJoinPlan(tx, current, myplan, lhsField, rhsField, joinpred);
+         if (myschema.hasField(lhsField) && currsch.hasField(rhsField)) {
+            Plan p = new SimpleNestedLoopJoinPlan(tx, current, myplan, rhsField, lhsField, joinpred);
+         	p = addSelectPred(p);
+	        return addJoinPred(p, currsch);
+         }
+         else if (myschema.hasField(rhsField) && currsch.hasField(lhsField)) {
+            Plan p = new SimpleNestedLoopJoinPlan(tx, current, myplan, lhsField, rhsField, joinpred);
+            p = addSelectPred(p);
+	        return addJoinPred(p, currsch);
+         }
       }
       return null;
    }
@@ -175,31 +179,50 @@ class TablePlanner {
 
       //get predicate terms
       List<Term> predicateTerms = mypred.getTerms();
-
-      //algorithm
-
-//      Term tempTerm1 = tempPredicateTerms.remove(0);
-      //1. Get LHS field of the predicate
-//      String lhsField = predicateTerms.get(0).getLhs().asFieldName();
-//      System.out.println(lhsField);
-//
-//      //2. Get RHS field of the predicate
-//      String rhsField = predicateTerms.get(0).getRhs().asFieldName();
-//      System.out.println(rhsField);
-
       for (Term term : predicateTerms) {
          String lhsField = term.getLhs().asFieldName();
          String rhsField = term.getRhs().asFieldName();
-
+         
          //3. if both exist in their respective tables we call the MergeJoinPlan
          // current is the CURRENT PLAN, my plan is the incoming one
-         if (myschema.hasField(lhsField) && currsch.hasField(rhsField))
-            return new MergeJoinPlan(tx, current, myplan, rhsField, lhsField, isDistinct, joinpred); //here
-         else if (myschema.hasField(rhsField) && currsch.hasField(lhsField))
-            return new MergeJoinPlan(tx, current, myplan, lhsField, rhsField, isDistinct, joinpred); //here
+         if (myschema.hasField(lhsField) && currsch.hasField(rhsField)) {
+        	Plan p = new MergeJoinPlan(tx, current, myplan, rhsField, lhsField, isDistinct, joinpred); //here
+	        p = addSelectPred(p);
+	        return addJoinPred(p, currsch);
+         }
+         else if (myschema.hasField(rhsField) && currsch.hasField(lhsField)) {
+        	Plan p = new MergeJoinPlan(tx, current, myplan, lhsField, rhsField, isDistinct, joinpred); //here
+         	p = addSelectPred(p);
+	        return addJoinPred(p, currsch);
+         }
       }
       return null;
    }
+   
+   private Plan makeHashJoin(Plan current, Schema currsch, Predicate joinpred) {
+	      boolean joinCondition = false;
+
+	      //get predicate terms
+	      List<Term> predicateTerms = mypred.getTerms();
+	      for (Term term : predicateTerms) {
+	         String lhsField = term.getLhs().asFieldName();
+	         String rhsField = term.getRhs().asFieldName();
+
+	         //3. if both exist in their respective tables we call the MergeJoinPlan
+	         // current is the CURRENT PLAN, my plan is the incoming one
+	         if (myschema.hasField(lhsField) && currsch.hasField(rhsField)) {
+	            Plan p = new HashPlan(tx, current, myplan, rhsField, lhsField, isDistinct, joinpred); //here
+	            p = addSelectPred(p);
+		        return addJoinPred(p, currsch);
+	         }
+	         else if (myschema.hasField(rhsField) && currsch.hasField(lhsField)) {
+	            Plan p = new HashPlan(tx, current, myplan, lhsField, rhsField, isDistinct, joinpred); //here
+	            p = addSelectPred(p);
+		        return addJoinPred(p, currsch);
+	         }
+	      }
+	      return null;
+	   }
 
    /**
     * Constructs a product plan of the specified plan and

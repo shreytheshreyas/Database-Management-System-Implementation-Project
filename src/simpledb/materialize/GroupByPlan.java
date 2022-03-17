@@ -30,7 +30,10 @@ public class GroupByPlan implements Plan {
     */
    public GroupByPlan(Transaction tx, Plan p, List<String> groupfields, List<AggregationFn> aggfns) {
       //Converting groupfields List from List to LinkedHashMap so as to successfully execute sortPlan
-      LinkedHashMap<String, String> groupFieldsLhm = convertListToLhm(groupfields);
+	   LinkedHashMap<String, String> groupFieldsLhm = new LinkedHashMap<String, String>();
+	  if (groupfields.size() > 0) {
+		  groupFieldsLhm = convertListToLhm(groupfields);
+	  }
 //      this.p = new SortPlan(tx, p, groupfields);
       this.p = new SortPlan(tx, p, groupFieldsLhm, false);
       this.groupfields = groupfields;
