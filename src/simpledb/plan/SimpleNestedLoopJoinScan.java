@@ -14,6 +14,7 @@ public class SimpleNestedLoopJoinScan implements Scan {
     private TableScan s2;
     private String fldname1, fldname2;
     private Constant joinval = null;
+    private Constant currRecord1 = null;
 
     /**
      * Create a mergejoin scan for the two underlying sorted scans.
@@ -28,8 +29,8 @@ public class SimpleNestedLoopJoinScan implements Scan {
         this.fldname1 = fldname1;
         this.fldname2 = fldname2;
         this.tx = tx;
-        System.out.println(tx.blockSize());
-        System.out.println(tx.availableBuffs());
+//        System.out.println(tx.blockSize());
+//        System.out.println(tx.availableBuffs());
         this.beforeFirst();
     }
 
@@ -84,19 +85,30 @@ public class SimpleNestedLoopJoinScan implements Scan {
 //                return false;
 //        }
 
-        s2.beforeFirst();
+//        s2.beforeFirst();
+    	if (currRecord1 != null) {
+	    	while (s2.next()) {
+	    		if (currRecord1.equals(s2.getVal(fldname2))) {
+	                return true;
+	            }
+//	    		if (!s2.next()) {
+//	    			s2.beforeFirst();
+//	    			currRecord1 = null;
+//	    		}
+	    	}
+	    	s2.beforeFirst();
+    	}
         while(s1.next()) {
-            Constant record1 = s1.getVal(fldname1);
-            while (s2.next()) {
-                Constant record2 = s2.getVal(fldname2);
-                if (record1.equals(record2)) {
-                    return true;
-                }
-            }
+	        currRecord1 = s1.getVal(fldname1);
+	        while (s2.next()) {
+	            Constant record2 = s2.getVal(fldname2);
+	            if (currRecord1.equals(record2)) {
+	                return true;
+	            }
+	        }
 // select * from student join enroll on sid = studentid;
 // select * from enroll join student on studentid = sid;
         }
-
         return false;
     }
 
