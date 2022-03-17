@@ -36,6 +36,7 @@ public class HeuristicQueryPlanner implements QueryPlanner {
     */
    public Plan createPlan(QueryData data, Transaction tx) {
 	  QueryPlanOutput.putAllPred(data.pred());
+	  QueryPlanOutput.putAllFields(data.fields());
       // Step 1:  Create a TablePlanner object for each mentioned table
       for (String tblname : data.tables()) {
          TablePlanner tp = new TablePlanner(tblname, data.pred(), tx, mdm, data.isDistinct()); //here

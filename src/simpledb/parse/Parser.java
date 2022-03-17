@@ -100,9 +100,10 @@ public class Parser {
    private boolean distinct() { //here
        if (lex.matchKeyword("distinct")) {
            lex.eatKeyword("distinct");
-           
+           QueryPlanOutput.putIsDistinct(true);
            return true;
        }
+       QueryPlanOutput.putIsDistinct(false);
        return false;
    }
    
