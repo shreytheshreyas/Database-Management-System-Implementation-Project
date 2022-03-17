@@ -70,57 +70,21 @@ public class StudentMajor {
          //String myQuery = "SELECT sid FROM STUDENT sid > 8";
 
          //Alpha Testing Queries
-         String myQuery = "select deptid, count(title) from course group by deptid";
+         String myQuery = "select sid, did from student, dept where did = majorid group by sid, did";
          Plan myPlan = myPlanner.createQueryPlan(myQuery, myTransaction);
          Scan resultScanner = myPlan.open();
          QueryPlanOutput.getFinalOutput();
          System.out.println(" ");
 
 //         System.out.println(myPlan);
-         System.out.println("sid\tsname\teid\tcid");
+         System.out.println("count");
          while (resultScanner.next()) {
-//        	 Integer deptid = resultScanner.getInt("deptid");
-//            Integer did = resultScanner.getInt("did");
-//            String title = resultScanner.getString("title");
+            Integer sid = resultScanner.getInt("sid");
+            Integer did = resultScanner.getInt("did");
+//            Integer did = resultScanner.getInt("countofdid");
 //            String dname = resultScanner.getString("dname");
-//            System.out.println(deptid + "\t" + did + "\t" + title + "\t" + dname);
-        	 
-//        	 Integer sid = resultScanner.getInt("sid");
-//            String sname = resultScanner.getString("sname");
-//            String prof = resultScanner.getString("prof");
-//            System.out.println(sname + "\t" + prof);
-//        	 System.out.println(sid);
-            
-//        	Integer sid = resultScanner.getInt("sid");
-//            String sname = resultScanner.getString("sname");
-//            Integer eid = resultScanner.getInt("eid");
-//            Integer cid = resultScanner.getInt("cid");
-//            System.out.println(sid + "\t" + sname + "\t" + eid + "\t" + cid);
-        	 
-//        	 String sname = resultScanner.getString("sname");
-//        	 System.out.println(sname);           
-        	 
-//        	 Integer sid = resultScanner.getInt("sid");
-//        	 Integer studentid = resultScanner.getInt("studentid");
-//           String sname = resultScanner.getString("sname");
-//           String cid = resultScanner.getString("grade");
-//           System.out.println(sid + "\t" + studentid + "\t" + sname + "\t" + cid);
-        	 
-//        	 String sname = resultScanner.getString("sname");
-//           String title = resultScanner.getString("title");
-//           Integer sid = resultScanner.getInt("sid");
-//           System.out.println(sid + "\t" + sname + "\t" + title);
 
-//            Integer count_of_sid = resultScanner.getInt("countofsid");
-//            Integer max_of_sid = resultScanner.getInt("maxofsid");
-//            Integer min_of_sid = resultScanner.getInt("minofsid");
-//            Integer sum_of_sid = resultScanner.getInt("sumofsid");
-//            Integer avg_of_sid = resultScanner.getInt("avgofsid");
-
-              Integer deptid = resultScanner.getInt("deptid");
-              Integer count_title = resultScanner.getInt("countoftitle");
-//              Integer count_majorid = resultScanner.getInt("countofdeptid");
-            System.out.println(deptid + "\t" + count_title);
+            System.out.println(sid + "\t" + did);
          }
 
 
