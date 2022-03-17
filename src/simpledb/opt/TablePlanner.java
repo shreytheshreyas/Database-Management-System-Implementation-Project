@@ -138,7 +138,7 @@ class TablePlanner {
 
       if (queryJoinPlan == null)
          queryJoinPlan = makeProductJoin(current, currsch);
-      
+      queryJoinPlan = nestedLoopJoinPlan;
       return queryJoinPlan;
    }
 
