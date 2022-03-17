@@ -82,7 +82,7 @@ public class HeuristicQueryPlanner implements QueryPlanner {
          currentplan = new SortPlan(tx, currentplan, data.orderFields(), data.isDistinct());
       }
 
-      currentplan = new ProjectPlan(currentplan, data.fields());
+//      currentplan = new ProjectPlan(currentplan, data.fields());
 
       // Step 5.  Project on the field names and return
 
@@ -92,6 +92,7 @@ public class HeuristicQueryPlanner implements QueryPlanner {
          currentplan = new GroupByPlan(tx, currentplan, data.getGroupByFields(), data.getAggFunctions());
       }
 
+      currentplan = new ProjectPlan(currentplan, data.fields());
 //      currentplan = new ProjectPlan(currentplan, data.fields());
       return currentplan;
    }

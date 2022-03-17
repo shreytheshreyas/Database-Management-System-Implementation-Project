@@ -131,6 +131,10 @@ public class Parser {
          if(lex.matchKeyword("by")) {
             lex.eatKeyword("by");
             groupByFields = groupFieldList();
+//            fields.addAll(groupByFields); //original implementation
+//            for(String groupfield : groupByFields) {
+//               fields.add("countof" + groupfield);
+//            }
          }
       }
 
@@ -198,8 +202,8 @@ public class Parser {
             lex.eatDelim('(');
             String fieldName = field();
             lex.eatDelim(')');
-            L.add(fieldName);
-
+            L.add("countof" + fieldName);
+//            L.add(fieldName);
             switch(aggregateFunctionStr) {
                case "count": aggregateFunction = new CountFn(fieldName); break;
                case "max": aggregateFunction = new MaxFn(fieldName); break;
@@ -238,6 +242,7 @@ public class Parser {
       ArrayList<String> myList  = new ArrayList<>();
       myList.add(field());
       if(lex.matchDelim(',')) {
+         lex.eatDelim(',');
          myList.addAll(groupFieldList());
       }
 
