@@ -3,6 +3,8 @@ package simpledb.query;
 import java.util.ArrayList;
 import java.util.List;
 
+import simpledb.materialize.AggregationFn;
+
 public class QueryPlanOutput {
 	public static String finalOutput = "";
 	public static String selectPlan = "";
@@ -12,6 +14,10 @@ public class QueryPlanOutput {
 	public static ArrayList<String> finalJoinPred = new ArrayList<String>();
 	public static ArrayList<String> scanPlan = new ArrayList<String>();
 	public static ArrayList<String> joinPlans = new ArrayList<String>();
+	
+	public static String aggFns = "";
+	public static String groupBy = "";
+	public static Boolean isDistinct = false;
 	
 //	public static void putSelectPlan(String selectPlanInput) {
 //		selectPlan = selectPlanInput;
@@ -35,40 +41,33 @@ public class QueryPlanOutput {
 		for (Term term : temp) {
 			allPredTerms.add(term.toString());
 		}
-//		for (Term term : terms) {
-//			String LHS = term.getLhs().toString();
-//			String RHS = term.getRhs().toString();
-//			try {
-//				// ATTRIBUTE EQUATE TO INTEGER
-//				Integer d = Integer.parseInt(RHS);
-//		        if (d.getClass().getSimpleName().equals("Integer")) {
-//		        	selectPred.add(term.toString());
-//		        } 
-////		        else if () {
-////		        	
-////		        }
-//		        
-//		        // ATTRIBUTE EQUATES TO ANOTHER ATTRIBUTE IN THE SAME TABLE
-//		    } catch (NumberFormatException nfe) {
-//		        joinPred.add(term.toString());
-//		    }
-//		}
 	}
 	
 	public static void putFinalJoinPred(String pred) {
-		// joinPred -> sid=studentid and sectionid=sectid
-		// field1 = studentid field2 = sid
-		// finaljoinPred.add(sid=studentid)
-//		for (String term : joinPred) {
-//			String[] fields = term.split("=");
-//			if ( (field1.equals(fields[0]) || field1.equals(fields[1])) && (field2.equals(fields[0]) || field2.equals(fields[1])) ) {
-//				finalJoinPred.add(term);
-//			}
-//		}
 		finalJoinPred.add(pred);
-		
 	}
 	
+	public static void putAggTerms(List<AggregationFn> aggfns) {
+		List<String> temp = new ArrayList<String>();
+		for (AggregationFn fn : aggfns)
+			temp.add(fn.fieldName());
+		aggFns = String.join(", ", temp);
+//		System.out.println(aggFns);
+	}
+	
+	public static void putGroupByTerms(List<String> groupfields) {
+		List<String> temp = new ArrayList<String>();
+		if (groupfields.size() > 0) {
+			for (String fldname : groupfields)
+				temp.add(fldname);
+			groupBy = String.join(", ", temp);
+			groupBy = " (Group By: " + groupBy + ")";
+		}
+	}
+	
+	public static void putIsDistinct(Boolean distinct) {
+		isDistinct = distinct;
+	}
 	
 	//select (a>5) [(scan R) hash join (index scan on S)](c=d)
 	public static void getFinalOutput() {
@@ -80,7 +79,12 @@ public class QueryPlanOutput {
 			}
 		}
 		String finalSelectPred = String.join(", ", allPredTerms);
-		System.out.print("select (" + finalSelectPred + ") ");
+		if (isDistinct) {
+			System.out.print("select distinct (" + finalSelectPred + aggFns + ") ");
+		} else {
+			System.out.print("select (" + finalSelectPred + aggFns + ") ");
+		}
+		
 		
 		// JOIN PLAN
 		int count = 0;
@@ -113,7 +117,7 @@ public class QueryPlanOutput {
 				count++;
 			}
 	
-			System.out.print(output);
+			System.out.print(output + groupBy);
 			System.out.println(" ");
 		}
 		// CASES WHERE THERE ARE NO JOINS (1 TABLE ONLY)
@@ -121,11 +125,12 @@ public class QueryPlanOutput {
 			String tableNames = String.join(", ", tables);
 			output = "[" + tableNames + "]";
 			
-			System.out.print(output);
+			System.out.print(output + groupBy);
 			System.out.println(" ");
 		}
 		
 		finalSelectPred = "";
+		aggFns = "";
 		finalOutput = "";
 		selectPlan = "";
 		tables = new ArrayList<String>();
@@ -134,6 +139,7 @@ public class QueryPlanOutput {
 		finalJoinPred = new ArrayList<String>();
 		scanPlan = new ArrayList<String>();
 		joinPlans = new ArrayList<String>();
+		groupBy = "";
 		
 		
 	}

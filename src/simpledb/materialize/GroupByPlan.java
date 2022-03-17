@@ -68,6 +68,8 @@ public class GroupByPlan implements Plan {
       Scan s = p.open();
       String scanString1 = String.valueOf(s);
       planType1 = (scanString1.split("@")[0]).split("\\.")[2];
+      QueryPlanOutput.putAggTerms(aggfns);
+      QueryPlanOutput.putGroupByTerms(groupfields);
       return new GroupByScan(s, groupfields, aggfns);
    }
    

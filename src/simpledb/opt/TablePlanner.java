@@ -135,10 +135,10 @@ class TablePlanner {
           }
           count++;
       }
-//      queryJoinPlan = indexJoinPlan;
+
       if (queryJoinPlan == null)
          queryJoinPlan = makeProductJoin(current, currsch);
-      queryJoinPlan = hashJoinPlan;
+      
       return queryJoinPlan;
    }
 

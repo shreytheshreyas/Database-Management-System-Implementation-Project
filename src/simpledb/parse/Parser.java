@@ -100,6 +100,7 @@ public class Parser {
    private boolean distinct() { //here
        if (lex.matchKeyword("distinct")) {
            lex.eatKeyword("distinct");
+           
            return true;
        }
        return false;
