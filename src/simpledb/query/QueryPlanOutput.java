@@ -125,6 +125,7 @@ public class QueryPlanOutput {
 			System.out.println(" ");
 		}
 		
+		finalSelectPred = "";
 		finalOutput = "";
 		selectPlan = "";
 		tables = new ArrayList<String>();
