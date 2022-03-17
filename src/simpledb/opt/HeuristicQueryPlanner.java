@@ -88,7 +88,7 @@ public class HeuristicQueryPlanner implements QueryPlanner {
 
 //      return new ProjectPlan(currentplan, data.fields());
       //NEW STEP - checking if the query needs to have a group by plan
-      if(data.hasGroupByFields()) {
+      if(data.hasGroupByFields() || data.hasAggFields()) {
          currentplan = new GroupByPlan(tx, currentplan, data.getGroupByFields(), data.getAggFunctions());
       }
 

@@ -32,7 +32,7 @@ public class StudentMajor {
 //         String myQuery = "SELECT sname, majorid, gradyear FROM STUDENT ORDER BY sname asc, majorid asc, gradyear desc"; work
 //         String myQuery = "select sname, prof from student, enroll, section where sid = studentid and sectionid = sectid order by sname"; work
 //         String myQuery = "select sid from student, enroll, section where sid = studentid and yearoffered = gradyear and sid = 3"; not work
-//         String myQuery = "select sname, prof from student, enroll, section where sectionid = sectid AND sid = studentid"; work
+//         String myQuery = "select sname, prof from student, enroll, section where sectionid = secti	d AND sid = studentid"; work
 //         String myQuery = "select sid from student, enroll, section where sid = studentid and yearoffered = gradyear"; work
 //         String myQuery = "select sname from student where sid = 5"; work
 
@@ -70,7 +70,7 @@ public class StudentMajor {
          //String myQuery = "SELECT sid FROM STUDENT sid > 8";
 
          //Alpha Testing Queries
-         String myQuery = "select sname from student where majorid = 10 and gradyear = 2022";
+         String myQuery = "select count(sid), max(sid), gradyear, min(sid), sum(sid), avg(sid) from student";
          Plan myPlan = myPlanner.createQueryPlan(myQuery, myTransaction);
          Scan resultScanner = myPlan.open();
          QueryPlanOutput.getFinalOutput();
@@ -85,9 +85,11 @@ public class StudentMajor {
 //            String dname = resultScanner.getString("dname");
 //            System.out.println(deptid + "\t" + did + "\t" + title + "\t" + dname);
         	 
-//            String title = resultScanner.getString("title");
+//        	 Integer sid = resultScanner.getInt("sid");
+//            String sname = resultScanner.getString("sname");
 //            String prof = resultScanner.getString("prof");
 //            System.out.println(sname + "\t" + prof);
+//        	 System.out.println(sid);
             
 //        	Integer sid = resultScanner.getInt("sid");
 //            String sname = resultScanner.getString("sname");
@@ -95,8 +97,19 @@ public class StudentMajor {
 //            Integer cid = resultScanner.getInt("cid");
 //            System.out.println(sid + "\t" + sname + "\t" + eid + "\t" + cid);
         	 
-        	 String sname = resultScanner.getString("sname");
-        	 System.out.println(sname);            
+//        	 String sname = resultScanner.getString("sname");
+//        	 System.out.println(sname);           
+        	 
+//        	 Integer sid = resultScanner.getInt("sid");
+//        	 Integer studentid = resultScanner.getInt("studentid");
+//           String sname = resultScanner.getString("sname");
+//           String cid = resultScanner.getString("grade");
+//           System.out.println(sid + "\t" + studentid + "\t" + sname + "\t" + cid);
+        	 
+//        	 String sname = resultScanner.getString("sname");
+//           String title = resultScanner.getString("title");
+//           Integer sid = resultScanner.getInt("sid");
+//           System.out.println(sid + "\t" + sname + "\t" + title);
          }
 
          System.out.println("Query was a success");

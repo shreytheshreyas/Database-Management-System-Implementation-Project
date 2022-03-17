@@ -124,7 +124,7 @@ public class Parser {
       }
 
       //LOGIC FOR GROUP BY
-      ArrayList<String> groupByFields = null;
+      ArrayList<String> groupByFields = new ArrayList<String>();
       if(lex.matchKeyword("group")) {
          lex.eatKeyword("group");
          if(lex.matchKeyword("by")) {
@@ -134,7 +134,7 @@ public class Parser {
       }
 
       //LOGIC FOR ORDER BY
-      LinkedHashMap<String, String> orderFields = null;
+      LinkedHashMap<String, String> orderFields = new LinkedHashMap<String, String>();
       if(lex.matchKeyword("order")) {
          lex.eatKeyword("order");
          if (lex.matchKeyword("by")) {
