@@ -24,8 +24,7 @@ public class DistinctScan implements Scan {
     * @param comp the record comparator
     */
    public DistinctScan(List<TempTable> runs) {
-	  this.s1 = (Scan) runs.get(0).open();
-
+	   this.s1 = (Scan) runs.get(0).open();
    }
    
    /**
