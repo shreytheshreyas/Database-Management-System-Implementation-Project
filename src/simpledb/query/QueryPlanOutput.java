@@ -1,7 +1,9 @@
 package simpledb.query;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import simpledb.materialize.AggregationFn;
 
@@ -19,6 +21,7 @@ public class QueryPlanOutput {
 	
 	public static List<String> aggFns = new ArrayList<String>();
 	public static String groupBy = "";
+	public static String orderBy = "";
 	public static Boolean isDistinct = false;
 	
 //	public static void putSelectPlan(String selectPlanInput) {
@@ -70,6 +73,19 @@ public class QueryPlanOutput {
 				temp.add(fldname);
 			groupBy = String.join(", ", temp);
 			groupBy = " (Group By: " + groupBy + ")";
+		}
+	}
+	
+	public static void putOrderByTerms(LinkedHashMap<String, String> orderbyfields) {
+		List<String> temp = new ArrayList<String>();
+		if (orderbyfields.size() > 0) {
+			for (Map.Entry mapElement : orderbyfields.entrySet()) {
+		         String fldname = (String) mapElement.getKey();
+		         String orderValue = (String) mapElement.getValue();
+		         temp.add(fldname + " " + orderValue);
+	         }
+			orderBy = String.join(", ", temp);
+			orderBy = " (Order By: " + orderBy + ")";
 		}
 	}
 	
@@ -128,7 +144,7 @@ public class QueryPlanOutput {
 				count++;
 			}
 	
-			System.out.print(output + groupBy);
+			System.out.print(output + groupBy + orderBy);
 			System.out.println(" ");
 		}
 		// CASES WHERE THERE ARE NO JOINS (1 TABLE ONLY)
@@ -136,7 +152,7 @@ public class QueryPlanOutput {
 			String tableNames = String.join(", ", tables);
 			output = "[" + tableNames + "]";
 			
-			System.out.print(output + groupBy);
+			System.out.print(output + groupBy + orderBy);
 			System.out.println(" ");
 		}
 		
