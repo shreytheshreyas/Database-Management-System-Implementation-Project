@@ -91,7 +91,7 @@ public class StudentMajor {
          // String myQuery = "select sname, prof, sectionid from student, enroll, section
          // where sid = studentid AND sectionid = sectid and sectionid = 43";
 
-         String myQuery = "select sum(sid), avg(gradyear), majorid from student where gradyear > 2019 and gradyear < 2022 group by majorid";
+         String myQuery = "select sid, sname, majorid, dname, title, cid, sectionid, grade from student, dept, course, enroll where sid = studentid and did = deptid and majorid = did order by sid, sname, majorid, dname, title, cid, sectionid, grade";
          Plan myPlan = myPlanner.createQueryPlan(myQuery, myTransaction);
          Scan resultScanner = myPlan.open();
          QueryPlanOutput.getFinalOutput();
@@ -100,10 +100,6 @@ public class StudentMajor {
          // System.out.println(myPlan);
          System.out.println("count");
          while (resultScanner.next()) {
-//            Integer sid = resultScanner.getInt("sumofsid");
-//            Integer sname = resultScanner.getInt("avgofgradyear");
-//            Integer majorid = resultScanner.getInt("majorid");
-        	 
         	 Integer sid = resultScanner.getInt("sid");
         	 String sname = resultScanner.getString("sname");
         	 Integer majorid = resultScanner.getInt("majorid");

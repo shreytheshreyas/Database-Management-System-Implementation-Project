@@ -93,7 +93,7 @@ class TablePlanner {
       Plan sortMergeJoinPlan = makeSortMergeJoin(current, currsch, joinpred);
       Plan indexJoinPlan  = makeIndexJoin(current, currsch, joinpred);
       Plan nestedLoopJoinPlan = makeNestedLoopJoin(current, currsch, joinpred);
-//      Plan hashJoinPlan = makeHashJoin(current, currsch, joinpred);
+      Plan hashJoinPlan = makeHashJoin(current, currsch, joinpred);
       int sortMergeJoinPlanCost = -1;
       int indexJoinPlanCost = -1;
       int nestedLoopJoinPlanCost = -1;
@@ -117,10 +117,10 @@ class TablePlanner {
          comparisonArray.put(nestedLoopJoinPlan, nestedLoopJoinPlanCost);
 	   }
       
-//      if (hashJoinPlan != null) {
-//    	  hashJoinPlanCost = hashJoinPlan.blocksAccessed();
-//          comparisonArray.put(hashJoinPlan, hashJoinPlanCost);
-// 	   }
+      if (hashJoinPlan != null) {
+    	  hashJoinPlanCost = hashJoinPlan.blocksAccessed();
+          comparisonArray.put(hashJoinPlan, hashJoinPlanCost);
+ 	   }
       
       int count = 0;
       for (Map.Entry mapElement : comparisonArray.entrySet()) {
