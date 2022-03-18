@@ -50,6 +50,9 @@ public class DistinctPlan implements Plan {
       src.close();
       while (runs.size() > 1)
          runs = doAMergeIteration(runs);
+      if (runs.size() == 0) {
+    	  return p.open();
+      }
       return new DistinctScan(runs);
    }
    
