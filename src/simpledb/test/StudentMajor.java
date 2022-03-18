@@ -90,8 +90,8 @@ public class StudentMajor {
          // Alpha Testing Queries
          // String myQuery = "select sname, prof, sectionid from student, enroll, section
          // where sid = studentid AND sectionid = sectid and sectionid = 43";
-         String myQuery = "select sid, sname, majorid, dname, title, cid, sectionid, grade from student, dept, course, enroll where sid = studentid and majorid = did and did = deptid order by sid, sname, majorid, dname, title, cid, sectionid, grade";
 
+         String myQuery = "select sum(sid), avg(gradyear), majorid from student where gradyear > 2019 and gradyear < 2022 group by majorid";
          Plan myPlan = myPlanner.createQueryPlan(myQuery, myTransaction);
          Scan resultScanner = myPlan.open();
          QueryPlanOutput.getFinalOutput();

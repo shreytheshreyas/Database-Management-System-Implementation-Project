@@ -104,7 +104,7 @@ public class QueryPlanOutput {
 		}
 		
 		allPredTerms.addAll(allFields);
-		allPredTerms.addAll(aggFns);
+//		allPredTerms.addAll(aggFns);
 		String finalSelectPred = String.join(", ", allPredTerms);
 		if (isDistinct) {
 			System.out.print("select distinct (" + finalSelectPred + ") ");
