@@ -79,13 +79,6 @@ public class CreateStudentDB {
          insertDataStatement = "insert into DEPT(did, dname) values ";
          String[] departmentValues = {"(10, 'compsci')",
                               "(20, 'math')",
-                              "(30, 'drama')",
-                              "(10, 'compsci')",
-                              "(20, 'math')",
-                              "(30, 'drama')",
-                              "(10, 'compsci')",
-                              "(20, 'math')",
-                              "(30, 'drama')",
                               "(30, 'drama')"};
          for (String departmentValue : departmentValues) {
             String command = insertDataStatement + departmentValue;

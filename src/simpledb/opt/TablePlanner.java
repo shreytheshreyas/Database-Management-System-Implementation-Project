@@ -138,7 +138,6 @@ class TablePlanner {
 
       if (queryJoinPlan == null)
          queryJoinPlan = makeProductJoin(current, currsch);
-      queryJoinPlan = indexJoinPlan;
       return queryJoinPlan;
    }
 
@@ -252,16 +251,16 @@ class TablePlanner {
    
    private Plan makeIndexJoin(Plan current, Schema currsch, Predicate joinpred) {
       for (String fldname : indexes.keySet()) {
-//         String outerfield = mypred.equatesWithField(fldname);
-    	 String outerfield = null;
-         if (mypred.getTerms().size() > 0) {
-        	 for (Term t : mypred.getTerms()) {
-        		 outerfield = t.equatesWithField(fldname);
-                 if (currsch.hasField(outerfield)) {
-            		 break;
-            	 }
-              }
-         }
+         String outerfield = mypred.equatesWithField(fldname);
+//    	 String outerfield = null;
+//         if (mypred.getTerms().size() > 0) {
+//        	 for (Term t : mypred.getTerms()) {
+//        		 outerfield = t.equatesWithField(fldname);
+//                 if (currsch.hasField(outerfield)) {
+//            		 break;
+//            	 }
+//              }
+//         }
          if (outerfield != null && currsch.hasField(outerfield)) {
             IndexInfo ii = indexes.get(fldname);
             Plan p = new IndexJoinPlan(current, myplan, ii, outerfield, joinpred);
