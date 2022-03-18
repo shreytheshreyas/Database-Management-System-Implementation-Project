@@ -205,17 +205,30 @@ public class Parser {
             String aggregateFunctionStr = lex.eatAggregateFunction();
             lex.eatDelim('(');
             String fieldName = field();
-            lex.eatDelim(')');
-            L.add("countof" + fieldName);
+            lex.eatDelim(')');         
 //            L.add(fieldName);
             switch(aggregateFunctionStr) {
-               case "count": aggregateFunction = new CountFn(fieldName); break;
-               case "max": aggregateFunction = new MaxFn(fieldName); break;
-               case "min": aggregateFunction = new MinFn(fieldName); break;
-               case "sum": aggregateFunction = new SumFn(fieldName); break;
-               case "avg": aggregateFunction = new AvgFn(fieldName); break;
+               case "count": 
+            	   aggregateFunction = new CountFn(fieldName); 
+            	   L.add("countof" + fieldName);
+            	   break;
+               case "max": 
+            	   aggregateFunction = new MaxFn(fieldName); 
+            	   L.add("maxof" + fieldName);
+            	   break;
+               case "min": 
+            	   aggregateFunction = new MinFn(fieldName); 
+            	   L.add("minof" + fieldName);
+            	   break;
+               case "sum": 
+            	   aggregateFunction = new SumFn(fieldName); 
+            	   L.add("sumof" + fieldName);
+            	   break;
+               case "avg": 
+            	   aggregateFunction = new AvgFn(fieldName); 
+            	   L.add("avgof" + fieldName);
+            	   break;
             }
-
             lex.addAggregateFunctionField(aggregateFunction);
          } else {
             String additionalField = field();
