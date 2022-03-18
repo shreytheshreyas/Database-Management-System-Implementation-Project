@@ -75,26 +75,24 @@ public class HeuristicQueryPlanner implements QueryPlanner {
     		 test.put(field, "asc");
     	}
          currentplan = new DistinctPlan(tx, currentplan, test); //here
-      }
-      
-      //
-      // Step 4: Checking if the query has order by
-      if(data.hasOrderFields()) {
-         currentplan = new SortPlan(tx, currentplan, data.orderFields(), data.isDistinct());
-      }
+      }   
 
-//      currentplan = new ProjectPlan(currentplan, data.fields());
-
-      // Step 5.  Project on the field names and return
-
-//      return new ProjectPlan(currentplan, data.fields());
-      //NEW STEP - checking if the query needs to have a group by plan
+      //Step: Check if the query needs to have a group by plan
       if(data.hasGroupByFields() || data.hasAggFields()) {
          currentplan = new GroupByPlan(tx, currentplan, data.getGroupByFields(), data.getAggFunctions());
+         currentplan = new ProjectPlan(currentplan, data.fields());
+         if(data.hasOrderFields()) {
+            currentplan = new SortPlan(tx, currentplan, data.orderFields(), data.isDistinct());
+         }
+      } else {
+    	// Step 4: Checking if the query has order by
+        if(data.hasOrderFields()) {
+           currentplan = new SortPlan(tx, currentplan, data.orderFields(), data.isDistinct());
+        }
+        // Step 5.  Project on the field names and return
+        currentplan = new ProjectPlan(currentplan, data.fields());
       }
-
-      currentplan = new ProjectPlan(currentplan, data.fields());
-//      currentplan = new ProjectPlan(currentplan, data.fields());
+      
       return currentplan;
    }
 

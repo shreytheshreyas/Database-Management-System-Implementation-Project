@@ -146,6 +146,9 @@ public class Parser {
          if (lex.matchKeyword("by")) {
             lex.eatKeyword("by");
             orderFields = orderList();
+            if (orderFields.size() > 0) {
+            	QueryPlanOutput.putOrderByTerms(orderFields);
+            }
          }
       }
       List<AggregationFn> aggregateFunctionFields = lex.getAggregateFunctionFields();
