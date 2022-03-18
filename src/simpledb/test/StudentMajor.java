@@ -90,7 +90,7 @@ public class StudentMajor {
          // Alpha Testing Queries
          // String myQuery = "select sname, prof, sectionid from student, enroll, section
          // where sid = studentid AND sectionid = sectid and sectionid = 43";
-         String myQuery = "select sid, sname, majorid, dname, title, cid, sectionid, grade from student, dept, course, enroll where sid = studentid and majorid = did and did = deptid order by sid, sname, majorid, dname, title, cid, sectionid, grade";
+         String myQuery = "select sum(sid), avg(gradyear), majorid from student where gradyear > 2019 and gradyear < 2022 group by majorid";
 
          Plan myPlan = myPlanner.createQueryPlan(myQuery, myTransaction);
          Scan resultScanner = myPlan.open();
@@ -100,15 +100,15 @@ public class StudentMajor {
          // System.out.println(myPlan);
          System.out.println("count");
          while (resultScanner.next()) {
-            Integer sid = resultScanner.getInt("sid");
-            String sname = resultScanner.getString("sname");
+            Integer sid = resultScanner.getInt("sumofsid");
+            Integer sname = resultScanner.getInt("avgofgradyear");
             Integer majorid = resultScanner.getInt("majorid");
-            String dname = resultScanner.getString("dname");
-            String title = resultScanner.getString("title");
-            Integer cid = resultScanner.getInt("cid");
-            Integer sectionid = resultScanner.getInt("sectionid");
-            String grade = resultScanner.getString("grade");
-            System.out.println(sid + "|" + sname + "|" + majorid+ "|" + dname+ "|" + title+ "|" + cid+ "|" + sectionid+ "|" + grade);
+//            String dname = resultScanner.getString("dname");
+//            String title = resultScanner.getString("title");
+//            Integer cid = resultScanner.getInt("cid");
+//            Integer sectionid = resultScanner.getInt("sectionid");
+//            String grade = resultScanner.getString("grade");
+            System.out.println(sid + "|" + sname + "|" + majorid);
             // Integer did = resultScanner.getInt("countofdid");
             // String dname = resultScanner.getString("dname");
 
