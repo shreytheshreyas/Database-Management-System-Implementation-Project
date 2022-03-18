@@ -100,19 +100,24 @@ public class StudentMajor {
          // System.out.println(myPlan);
          System.out.println("count");
          while (resultScanner.next()) {
-            Integer sid = resultScanner.getInt("sid");
-            String sname = resultScanner.getString("sname");
-            Integer majorid = resultScanner.getInt("majorid");
-            String dname = resultScanner.getString("dname");
+//            Integer sid = resultScanner.getInt("sumofsid");
+//            Integer sname = resultScanner.getInt("avgofgradyear");
+//            Integer majorid = resultScanner.getInt("majorid");
+        	 
+        	 Integer sid = resultScanner.getInt("sid");
+        	 String sname = resultScanner.getString("sname");
+        	 Integer majorid = resultScanner.getInt("majorid");
+        	 String dname = resultScanner.getString("dname");
             String title = resultScanner.getString("title");
             Integer cid = resultScanner.getInt("cid");
             Integer sectionid = resultScanner.getInt("sectionid");
             String grade = resultScanner.getString("grade");
             System.out.println(sid + "|" + sname + "|" + majorid+ "|" + dname+ "|" + title+ "|" + cid+ "|" + sectionid+ "|" + grade);
+
             // Integer did = resultScanner.getInt("countofdid");
             // String dname = resultScanner.getString("dname");
 
-            // System.out.println(deptid + "\t" + did + "\t" + title + "\t" + dname);
+             System.out.println(sid + "|" + sname + "|" + majorid + "|" + dname + "|" + title + "|" + cid + "|" + sectionid + "|" + grade);
 
             // Integer sid = resultScanner.getInt("sid");
             // String sname = resultScanner.getString("sname");
